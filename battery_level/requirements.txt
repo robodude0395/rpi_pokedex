@@ -1,1 +1,3 @@
 adafruit_ads1x15
+board
+adafruit_blinka
