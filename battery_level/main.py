@@ -36,10 +36,10 @@ def voltage_to_percent(voltage):
 while True:
     voltage = chan.voltage
     percent = voltage_to_percent(voltage)
-    image = Image.new("RGB", (disp.width, disp.height), "WHITE")
+    image = Image.new("RGB", (disp.width, disp.height), "BLACK")
     draw = ImageDraw.Draw(image)
     text = f"Battery: {percent}%"
-    draw.text((20, 20), text, fill="BLACK", font=Font1)
+    draw.text((20, 20), text, fill="WHITE", font=Font1)
     im_r = image.rotate(270)
     disp.ShowImage(im_r)
     time.sleep(2)
