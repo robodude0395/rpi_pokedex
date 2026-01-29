@@ -28,6 +28,7 @@ draw = ImageDraw.Draw(image1)
 # Draw a black filled box to clear the image.
 draw.rectangle((0,0,disp.width, disp.height), outline=0, fill=0)
 disp.ShowImage(image1)
+image1 = image1.rotate(270)
 
 try:
     while True:
@@ -79,7 +80,6 @@ try:
         else: # button is pressed:
             draw.ellipse((70,40,90,60), outline=255, fill=0) #A button filled
             print ("KEY3")
-        image1 = image1.rotate(270)
         disp.ShowImage(image1)
 except:
 	print("except")
