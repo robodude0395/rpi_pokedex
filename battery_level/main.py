@@ -9,7 +9,7 @@ import os
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
 from display_and_input import ST7789
-from display_and_input.config import RaspberryPi
+import  display_and_input.config
 
 # Display setup
 disp = ST7789.ST7789()

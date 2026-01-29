@@ -1,7 +1,7 @@
 # -*- coding:utf-8 -*-
 import spidev as SPI
 import logging
-import battery_level.ST7789 as ST7789
+import ST7789
 
 import time
 import subprocess
