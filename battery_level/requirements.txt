@@ -1,3 +1,8 @@
 adafruit-blinka
 adafruit-circuitpython-ads1x15
 board
+spidev
+numpy
+lgpio
+gpiozero
+Pillow

@@ -1,6 +1,6 @@
 import spidev as SPI
 import logging
-import ST7789
+import battery_level.ST7789 as ST7789
 import time
 
 from PIL import Image,ImageDraw,ImageFont
@@ -60,7 +60,7 @@ im_r=image1.rotate(270)
 disp.ShowImage(im_r)
 time.sleep(3)
 logging.info("show image")
-image = Image.open('pic.jpg')	
+image = Image.open('pic.jpg')
 im_r=image.rotate(270)
 disp.ShowImage(im_r)
 time.sleep(3)
