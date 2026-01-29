@@ -1,9 +1,14 @@
+
 import time
 import board
 from adafruit_ads1x15 import ADS1015, AnalogIn, ads1x15
 
 from PIL import Image, ImageDraw, ImageFont
-import ST7789
+import os
+
+# Ensure parent directory is in sys.path for package import
+from display_and_input import ST7789
+from display_and_input import config
 
 # Display setup
 disp = ST7789.ST7789()
@@ -11,8 +16,9 @@ disp.Init()
 disp.clear()
 disp.bl_DutyCycle(50)
 
-# Font setup
-Font1 = ImageFont.truetype("Font/Font01.ttf", 40)
+# Font setup (use package font path)
+font_path = os.path.join(os.path.dirname(ST7789.__file__), 'Font', 'Font01.ttf')
+Font1 = ImageFont.truetype(font_path, 40)
 
 # ADC setup
 i2c = board.I2C()
