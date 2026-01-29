@@ -28,7 +28,6 @@ draw = ImageDraw.Draw(image1)
 # Draw a black filled box to clear the image.
 draw.rectangle((0,0,disp.width, disp.height), outline=0, fill=0)
 disp.ShowImage(image1)
-image1 = image1.rotate(90)
 
 try:
     while True:
