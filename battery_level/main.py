@@ -16,7 +16,7 @@ disp.clear()
 disp.bl_DutyCycle(50)
 
 # Font setup (use package font path)
-font_path = os.path.join(os.path.dirname(ST7789.__file__), 'Font', 'Font01.ttf')
+font_path = os.path.join(os.path.dirname(ST7789.__file__), 'Font', 'Monocraft.ttf')
 Font1 = ImageFont.truetype(font_path, 40)
 
 # ADC setup
