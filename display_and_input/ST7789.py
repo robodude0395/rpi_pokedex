@@ -1,14 +1,14 @@
 
 import time
-import config
+from . import config
 
 class ST7789(config.RaspberryPi):
 
     width = 240
-    height = 240 
+    height = 240
     def command(self, cmd):
         self.digital_write(self.GPIO_DC_PIN, False)
-        self.spi_writebyte([cmd])      
+        self.spi_writebyte([cmd])
     def data(self, val):
         self.digital_write(self.GPIO_DC_PIN, True)
         self.spi_writebyte([val])
@@ -22,57 +22,57 @@ class ST7789(config.RaspberryPi):
         self.digital_write(self.GPIO_RST_PIN,True)
         time.sleep(0.01)
     def Init(self):
-        """Initialize dispaly"""  
+        """Initialize dispaly"""
         self.module_init()
         self.reset()
 
         self.command(0x36)
         self.data(0x70)                 #self.data(0x00)
 
-        self.command(0x11)     
+        self.command(0x11)
 
-        time.sleep(0.12)               
+        time.sleep(0.12)
 
-        self.command(0x36)     
-        self.data(0x00)   
+        self.command(0x36)
+        self.data(0x00)
 
-        self.command(0x3A)     
-        self.data(0x05)   
+        self.command(0x3A)
+        self.data(0x05)
 
-        self.command(0xB2)     
-        self.data(0x0C)   
-        self.data(0x0C)   
-        self.data(0x00)   
-        self.data(0x33)   
-        self.data(0x33)   
+        self.command(0xB2)
+        self.data(0x0C)
+        self.data(0x0C)
+        self.data(0x00)
+        self.data(0x33)
+        self.data(0x33)
 
-        self.command(0xB7)     
-        self.data(0x00)   
+        self.command(0xB7)
+        self.data(0x00)
 
-        self.command(0xBB)     
-        self.data(0x3F)   
+        self.command(0xBB)
+        self.data(0x3F)
 
-        self.command(0xC0)     
-        self.data(0x2C)   
+        self.command(0xC0)
+        self.data(0x2C)
 
-        self.command(0xC2)     
-        self.data(0x01)   
+        self.command(0xC2)
+        self.data(0x01)
 
-        self.command(0xC3)     
-        self.data(0x0D)   
+        self.command(0xC3)
+        self.data(0x0D)
 
-        self.command(0xC6)     
-        self.data(0x0F)     
+        self.command(0xC6)
+        self.data(0x0F)
 
-        self.command(0xD0)     
-        self.data(0xA7)   
+        self.command(0xD0)
+        self.data(0xA7)
 
-        self.command(0xD0)     
-        self.data(0xA4)   
-        self.data(0xA1)   
+        self.command(0xD0)
+        self.data(0xA4)
+        self.data(0xA1)
 
-        self.command(0xD6)     
-        self.data(0xA1)   
+        self.command(0xD6)
+        self.data(0xA1)
 
         self.command(0xE0)
         self.data(0xF0)
@@ -106,18 +106,18 @@ class ST7789(config.RaspberryPi):
         self.data(0x31)
         self.data(0x3A)
 
-        self.command(0x21)     
+        self.command(0x21)
 
-        self.command(0x29) 
-  
+        self.command(0x29)
+
     def SetWindows(self, Xstart, Ystart, Xend, Yend):
         #set the X coordinates
         self.command(0x2A)
         self.data(0x00)               #Set the horizontal starting point to the high octet
         self.data(Xstart & 0xff)      #Set the horizontal starting point to the low octet
         self.data(0x00)               #Set the horizontal end to the high octet
-        self.data((Xend - 1) & 0xff) #Set the horizontal end to the low octet 
-        
+        self.data((Xend - 1) & 0xff) #Set the horizontal end to the low octet
+
         #set the Y coordinates
         self.command(0x2B)
         self.data(0x00)
@@ -125,8 +125,8 @@ class ST7789(config.RaspberryPi):
         self.data(0x00)
         self.data((Yend - 1) & 0xff )
 
-        self.command(0x2C) 
-        
+        self.command(0x2C)
+
     def ShowImage(self,Image):
         """Set buffer to value of Python Imaging Library image."""
         """Write display buffer to physical display"""
@@ -142,14 +142,14 @@ class ST7789(config.RaspberryPi):
         self.SetWindows ( 0, 0, self.width, self.height)
         self.digital_write(self.GPIO_DC_PIN,True)
         for i in range(0,len(pix),4096):
-            self.spi_writebyte(pix[i:i+4096])		
-        
+            self.spi_writebyte(pix[i:i+4096])
+
     def clear(self):
         """Clear contents of image buffer"""
         _buffer = [0xff]*(self.width * self.height * 2)
         self.SetWindows ( 0, 0, self.width, self.height)
         self.digital_write(self.GPIO_DC_PIN,True)
         for i in range(0,len(_buffer),4096):
-            self.spi_writebyte(_buffer[i:i+4096])	        
-        
+            self.spi_writebyte(_buffer[i:i+4096])
+
 
