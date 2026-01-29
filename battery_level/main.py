@@ -3,7 +3,13 @@ import board
 from adafruit_ads1x15 import ADS1015, AnalogIn, ads1x15
 
 from PIL import Image, ImageDraw, ImageFont
-import ST7789
+
+import sys
+import os
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+
+from display_and_input import ST7789
+from display_and_input.config import RaspberryPi
 
 # Display setup
 disp = ST7789.ST7789()
