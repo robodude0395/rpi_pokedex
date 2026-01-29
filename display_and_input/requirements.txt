@@ -1,4 +1,5 @@
 spidev
 numpy
+RPi.GPIO
 gpiozero
 Pillow
