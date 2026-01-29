@@ -6,7 +6,6 @@ from adafruit_ads1x15 import ADS1015, AnalogIn, ads1x15
 from PIL import Image, ImageDraw, ImageFont
 import os
 
-# Ensure parent directory is in sys.path for package import
 from display_and_input import ST7789
 from display_and_input import config
 
