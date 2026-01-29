@@ -1,23 +1,40 @@
 import time
-
 import board
-
 from adafruit_ads1x15 import ADS1015, AnalogIn, ads1x15
 
-# Create the I2C bus
+from PIL import Image, ImageDraw, ImageFont
+import ST7789
+
+# Display setup
+disp = ST7789.ST7789()
+disp.Init()
+disp.clear()
+disp.bl_DutyCycle(50)
+
+# Font setup
+Font1 = ImageFont.truetype("Font/Font01.ttf", 40)
+
+# ADC setup
 i2c = board.I2C()
-
-# Create the ADC object using the I2C bus
 ads = ADS1015(i2c)
-
-# Create single-ended input on channel 0
 chan = AnalogIn(ads, ads1x15.Pin.A0)
 
-# Create differential input between channel 0 and 1
-# chan = AnalogIn(ads, ads1x15.Pin.A0, ads1x15.Pin.A1)
+# Battery voltage range (adjust as needed)
+MIN_VOLTAGE = 3.0
+MAX_VOLTAGE = 4.2
 
-print("{:>5}\t{:>5}".format("raw", "v"))
+def voltage_to_percent(voltage):
+    percent = (voltage - MIN_VOLTAGE) / (MAX_VOLTAGE - MIN_VOLTAGE) * 100
+    percent = max(0, min(100, percent))
+    return int(percent)
 
 while True:
-    print("{:>5}\t{:>5.3f}".format(chan.value, chan.voltage))
-    time.sleep(0.5)
+    voltage = chan.voltage
+    percent = voltage_to_percent(voltage)
+    image = Image.new("RGB", (disp.width, disp.height), "WHITE")
+    draw = ImageDraw.Draw(image)
+    text = f"Battery: {percent}%"
+    draw.text((20, 100), text, fill="BLACK", font=Font1)
+    im_r = image.rotate(270)
+    disp.ShowImage(im_r)
+    time.sleep(2)
