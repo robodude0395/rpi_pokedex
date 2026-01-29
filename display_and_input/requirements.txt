@@ -1,2 +1,4 @@
 spidev
 numpy
+gpiozero
+Pillow
