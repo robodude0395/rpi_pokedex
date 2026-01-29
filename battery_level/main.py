@@ -17,7 +17,7 @@ disp.bl_DutyCycle(50)
 
 # Font setup (use package font path)
 font_path = os.path.join(os.path.dirname(ST7789.__file__), 'Font', 'Monocraft.ttf')
-Font1 = ImageFont.truetype(font_path, 30)
+Font1 = ImageFont.truetype(font_path, 25)
 
 # ADC setup
 i2c = board.I2C()
