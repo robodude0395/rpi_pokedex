@@ -4,7 +4,7 @@ A simple library for driving the ST7789 display and handling input for Raspberry
 
 ## Installation (editable/development mode)
 
-From the root of your project (where `setup.py` or `pyproject.toml` will be):
+From the root of your project:
 
 ```bash
 pip install -e ./display_and_input

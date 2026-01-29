@@ -5,7 +5,8 @@ setup(
     version='0.1.0',
     description='ST7789 display and input utilities for Raspberry Pi',
     author='Omar Da Best',
-    packages=['.'],
+    packages=['display_and_input'],
+    package_dir={'display_and_input': '.'},
     include_package_data=True,
     install_requires=[
         'spidev',
