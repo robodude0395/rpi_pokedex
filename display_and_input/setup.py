@@ -16,7 +16,7 @@ setup(
         'gpiozero'
     ],
     package_data={
-        'display_and_input': ['Font/*.ttf', 'Font/*.TXT', 'Font/*.txt'],
+        'display_and_input': ['Font/*.ttf', 'Font/*.TXT', 'Font/*.txt', 'Monocraft.ttf'],
     },
     classifiers=[
         'Programming Language :: Python :: 3',
