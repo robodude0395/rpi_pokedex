@@ -1,8 +1,6 @@
 
 import board
-import adafruit_ads1x15.ads1015 as ADS1015
-from adafruit_ads1x15.analog_in import AnalogIn
-import adafruit_ads1x15.ads1x15 as ADS
+from adafruit_ads1x15 import ADS1115, AnalogIn, ads1x15
 
 class BatteryReader:
     def __init__(self, min_voltage=2.5, max_voltage=4.2, channel=ADS.P0):
