@@ -59,11 +59,11 @@ class MenuApp:
     def handle_input(self):
         disp = self.disp
         # Replace with your actual button logic
-        if disp.digital_read(disp.GPIO_KEY_UP_PIN) == 1:
+        if disp.digital_read(disp.GPIO_KEY_DOWN_PIN) == 1:
             self.menus[self.current_menu].next()
             time.sleep(0.1)
 
-        elif disp.digital_read(disp.GPIO_KEY_DOWN_PIN) == 1:
+        elif disp.digital_read(disp.GPIO_KEY_UP_PIN) == 1:
             self.menus[self.current_menu].prev()
             time.sleep(0.1)
 
