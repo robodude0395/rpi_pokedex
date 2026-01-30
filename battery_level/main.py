@@ -1,46 +1,18 @@
-
 import time
 import board
+import busio
 import adafruit_ads1x15.ads1115 as ADS
 from adafruit_ads1x15.analog_in import AnalogIn
 
-from PIL import Image, ImageDraw, ImageFont
-import os
 
-from display_and_input import ST7789
-from display_and_input import config
+i2c = busio.I2C(board.SCL, board.SDA)
 
-# Display setup
-disp = ST7789.ST7789()
-disp.Init()
-disp.clear()
-disp.bl_DutyCycle(50)
-
-# Font setup (use package font path)
-font_path = os.path.join(os.path.dirname(ST7789.__file__), 'Font', 'Monocraft.ttf')
-Font1 = ImageFont.truetype(font_path, 25)
-
-# ADC setup
-i2c = board.I2C()
-ads = ADS1015(i2c)
+# Create the ADS object and specify the gain
+ads = ADS.ADS1115(i2c)
+ads.gain = 1
 chan = AnalogIn(ads, ADS.P0)
 
-# Battery voltage range (adjust as needed)
-MIN_VOLTAGE = 3.0
-MAX_VOLTAGE = 4.2
-
-def voltage_to_percent(voltage):
-    percent = (voltage - MIN_VOLTAGE) / (MAX_VOLTAGE - MIN_VOLTAGE) * 100
-    percent = max(0, min(100, percent))
-    return int(percent)
-
+# Continuously print the values
 while True:
-    voltage = chan.voltage
-    percent = voltage_to_percent(voltage)
-    image = Image.new("RGB", (disp.width, disp.height), "BLACK")
-    draw = ImageDraw.Draw(image)
-    text = f"Battery: {percent}%"
-    draw.text((20, 20), text, fill="WHITE", font=Font1)
-    im_r = image.rotate(270)
-    disp.ShowImage(im_r)
-    time.sleep(2)
+    print(f"MQ-135 Voltage: {chan.voltage}V")
+    time.sleep(1)
