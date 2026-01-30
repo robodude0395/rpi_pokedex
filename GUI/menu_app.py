@@ -1,4 +1,11 @@
+import os
+import time
+
+from PIL import Image, ImageDraw, ImageFont
+
+from display_and_input import ST7789
 from battery_utils import BatteryReader
+
 class BatteryIndicator:
     def __init__(self, font, pos=(10, 5), font_color=(255, 255, 255)):
         self.battery = BatteryReader()
@@ -10,12 +17,6 @@ class BatteryIndicator:
         percent = self.battery.get_percent()
         text = f"{percent}%"
         draw_obj.text(self.pos, text, font=self.font, fill=self.font_color)
-import os
-import time
-
-from PIL import Image, ImageDraw, ImageFont
-
-from display_and_input import ST7789
 
 class Menu:
     def __init__(self, items, title=None):

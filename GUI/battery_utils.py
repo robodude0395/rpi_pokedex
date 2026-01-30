@@ -1,18 +1,17 @@
 
 import board
-import busio
-import adafruit_ads1x15.ads1115 as ADS
-from adafruit_ads1x15.analog_in import AnalogIn
+from adafruit_ads1x15 import ADS1115, AnalogIn, ads1x15
 
 class BatteryReader:
-    def __init__(self, min_voltage=2.5, max_voltage=4.2, channel=0):
+    def __init__(self, min_voltage=2.5, max_voltage=4.2):
         self.min_voltage = min_voltage
         self.max_voltage = max_voltage
-        self.channel = channel
-        self.i2c = busio.I2C(board.SCL, board.SDA)
-        self.ads = ADS.ADS1115(self.i2c)
-        self.ads.gain = 1
-        self.chan = AnalogIn(self.ads, self.channel)
+        # Create the I2C bus
+        self.i2c = board.I2C()
+        # Create the ADC object using the I2C bus
+        self.ads = ADS1115(self.i2c)
+        # Create single-ended input on channel 0
+        self.chan = AnalogIn(self.ads, ads1x15.Pin.A0)
 
     def get_percent(self):
         voltage = self.chan.voltage
