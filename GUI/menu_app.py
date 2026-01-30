@@ -1,6 +1,9 @@
-from display_and_input import ST7789
-from PIL import Image, ImageDraw, ImageFont
+import os
 import time
+
+from PIL import Image, ImageDraw, ImageFont
+
+from display_and_input import ST7789
 
 class Menu:
     def __init__(self, items, title=None):
@@ -22,7 +25,7 @@ class MenuApp:
     FG_COLOR = (255, 255, 255)
     HIGHLIGHT_COLOR = (255, 255, 255)
     HIGHLIGHT_BG = (80, 80, 80)
-    FONT_PATH = 'display_and_input/Font/Font01.ttf'
+    FONT_PATH = os.path.join(os.path.dirname(ST7789.__file__), 'Font', 'Monocraft.ttf')
     FONT_SIZE = 22
 
     def __init__(self, menus):
