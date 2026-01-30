@@ -7,7 +7,7 @@ from display_and_input import ST7789
 from battery_utils import BatteryReader
 
 class BatteryIndicator:
-    def __init__(self, font, pos=(10, 5), font_color=(255, 255, 255)):
+    def __init__(self, font, pos=(50, 5), font_color=(255, 255, 255)):
         self.battery = BatteryReader()
         self.font = font
         self.pos = pos
@@ -58,7 +58,7 @@ class MenuApp:
         draw = ImageDraw.Draw(image)
         # Draw battery indicator first (top left corner)
         self.battery_indicator.draw(draw)
-        y = 30  # leave space for battery
+        y = 0  # leave space for battery
         if menu.title:
             draw.text((10, y), menu.title, font=self.font, fill=self.FG_COLOR)
             y += self.FONT_SIZE + 5
