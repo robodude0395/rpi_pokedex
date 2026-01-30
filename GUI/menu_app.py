@@ -1,4 +1,4 @@
-from GUI.battery_utils import BatteryReader
+from battery_utils import BatteryReader
 class BatteryIndicator:
     def __init__(self, font, pos=(10, 5), font_color=(255, 255, 255)):
         self.battery = BatteryReader()
