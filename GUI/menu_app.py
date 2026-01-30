@@ -58,18 +58,24 @@ class MenuApp:
     def handle_input(self):
         disp = self.disp
         # Replace with your actual button logic
-        if disp.digital_read(disp.GPIO_KEY_RIGHT_PIN) == 0:
+        if disp.digital_read(disp.GPIO_KEY_UP_PIN) == 1:
             self.menus[self.current_menu].next()
+            time.sleep(0.2)
 
-        elif disp.digital_read(disp.GPIO_KEY_LEFT_PIN) == 0:
+        elif disp.digital_read(disp.GPIO_KEY_DOWN_PIN) == 1:
             self.menus[self.current_menu].prev()
+            time.sleep(0.2)
 
-        elif disp.digital_read(disp.GPIO_KEY_PRESS_PIN) == 0:
+        elif disp.digital_read(disp.GPIO_KEY2_PIN) == 1:
             # Example: go to next menu or select
             self.current_menu = (self.current_menu + 1) % len(self.menus)
+            time.sleep(0.2)
 
-        elif disp.digital_read(disp.GPIO_KEY1_PIN) == 0:
+        """
+        elif disp.digital_read(disp.GPIO_KEY1_PIN) == 1:
             self.running = False
+            time.sleep(0.2)
+        """
 
     def run(self):
         while self.running:
