@@ -1,3 +1,15 @@
+from GUI.battery_utils import BatteryReader
+class BatteryIndicator:
+    def __init__(self, font, pos=(10, 5), font_color=(255, 255, 255)):
+        self.battery = BatteryReader()
+        self.font = font
+        self.pos = pos
+        self.font_color = font_color
+
+    def draw(self, draw_obj):
+        percent = self.battery.get_percent()
+        text = f"{percent}%"
+        draw_obj.text(self.pos, text, font=self.font, fill=self.font_color)
 import os
 import time
 
@@ -37,12 +49,15 @@ class MenuApp:
         self.menus = menus
         self.current_menu = 0
         self.running = True
+        self.battery_indicator = BatteryIndicator(self.font)
 
     def draw_menu(self):
         menu = self.menus[self.current_menu]
         image = Image.new('RGB', (self.disp.width, self.disp.height), self.BG_COLOR)
         draw = ImageDraw.Draw(image)
-        y = 10
+        # Draw battery indicator first (top left corner)
+        self.battery_indicator.draw(draw)
+        y = 30  # leave space for battery
         if menu.title:
             draw.text((10, y), menu.title, font=self.font, fill=self.FG_COLOR)
             y += self.FONT_SIZE + 5
