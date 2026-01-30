@@ -40,6 +40,6 @@ while True:
     draw = ImageDraw.Draw(image)
     text = f"Battery: {percent}%"
     draw.text((20, 20), text, fill="WHITE", font=Font1)
-    im_r = image.rotate(270)
+    im_r = image.rotate(0)
     disp.ShowImage(im_r)
     time.sleep(2)
