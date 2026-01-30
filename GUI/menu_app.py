@@ -7,7 +7,7 @@ from display_and_input import ST7789
 from battery_utils import BatteryReader
 
 class BatteryIndicator:
-    def __init__(self, font, pos=(50, 5), font_color=(255, 255, 255)):
+    def __init__(self, font, pos=(200, 5), font_color=(255, 255, 255)):
         self.battery = BatteryReader()
         self.font = font
         self.pos = pos
