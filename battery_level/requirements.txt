@@ -4,7 +4,7 @@ numpy
 lgpio
 gpiozero
 Pillow
-
 Adafruit-Blinka
 adafruit-circuitpython-busdevice
 typing-extensions~=4.0
+adafruit-circuitpython-ads1x15
