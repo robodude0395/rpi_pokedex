@@ -1,9 +1,8 @@
 
 import time
 import board
-from adafruit_ads1x15.ads1015 import ADS1015
+import adafruit_ads1x15.ads1115 as ADS
 from adafruit_ads1x15.analog_in import AnalogIn
-import adafruit_ads1x15.ads1x15 as ADS
 
 from PIL import Image, ImageDraw, ImageFont
 import os
