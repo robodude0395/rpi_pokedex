@@ -53,6 +53,7 @@ class MenuApp:
             else:
                 draw.text((10, y), item, font=self.font, fill=self.FG_COLOR)
             y += self.FONT_SIZE + 8
+        image = image.rotate(270)
         self.disp.ShowImage(image)
 
     def handle_input(self):
@@ -60,16 +61,16 @@ class MenuApp:
         # Replace with your actual button logic
         if disp.digital_read(disp.GPIO_KEY_UP_PIN) == 1:
             self.menus[self.current_menu].next()
-            time.sleep(0.2)
+            time.sleep(0.1)
 
         elif disp.digital_read(disp.GPIO_KEY_DOWN_PIN) == 1:
             self.menus[self.current_menu].prev()
-            time.sleep(0.2)
+            time.sleep(0.1)
 
         elif disp.digital_read(disp.GPIO_KEY2_PIN) == 1:
             # Example: go to next menu or select
             self.current_menu = (self.current_menu + 1) % len(self.menus)
-            time.sleep(0.2)
+            time.sleep(0.1)
 
         """
         elif disp.digital_read(disp.GPIO_KEY1_PIN) == 1:
