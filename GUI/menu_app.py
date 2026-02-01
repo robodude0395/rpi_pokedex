@@ -533,7 +533,7 @@ def create_sample_menus() -> Menu:
              "cause lightning storms. It has small electric sacs on "
              "both its cheeks. If threatened, it looses electric charges "
              "from the sacs.",
-        image_path='image.jpg',  # Set to actual image path like "images/pikachu.jpg"
+        image_path='image.png',  # Set to actual image path like "images/pikachu.jpg"
         image_position="top",
         image_size=(100, 100),
     )
