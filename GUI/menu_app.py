@@ -476,7 +476,7 @@ class MenuApp:
         self.scroll_offset: int = 0
         self.running: bool = True
         self.battery_indicator: BatteryIndicator = BatteryIndicator(
-            self.font, right_padding=2, battery_font_size=10
+            self.font, right_padding=0, battery_font_size=10
         )
 
     def _get_page_content_width(self) -> int:
