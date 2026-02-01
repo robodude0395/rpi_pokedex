@@ -59,7 +59,7 @@ class BatteryIndicator:
             draw_obj: PIL ImageDraw object to draw on.
         """
         #percent: int = self.battery.get_percent()
-        percent: int  = 0.5
+        percent: int  = 50
 
         # Battery dimensions
         battery_width: int = 40
