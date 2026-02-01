@@ -647,6 +647,14 @@ class MenuApp:
         draw: ImageDraw.ImageDraw = ImageDraw.Draw(image)
         self.battery_indicator.draw(draw)
 
+        # Draw page title
+        draw.text(
+            (self.PADDING_HORIZONTAL, 0),
+            "Description",
+            font=self.font,
+            fill=self.FG_COLOR
+        )
+
         y: int = self.TOP_BAR_HEIGHT
         x: int = self.PADDING_HORIZONTAL
         
