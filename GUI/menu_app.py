@@ -250,7 +250,7 @@ class MenuApp:
     )
     FONT_SIZE: int = 22
     MENU_FONT_SIZE: int = 16
-    BODY_FONT_SIZE: int = 12
+    BODY_FONT_SIZE: int = 16
     DEBOUNCE_DELAY: float = 0.1
     
     # Padding and spacing constants
@@ -569,7 +569,7 @@ def create_sample_menus() -> Menu:
     about_page = Page(
         title="About",
         text=open("about.txt").read(),
-        image_path=None,
+        image_path='icon.jpg',
         image_position="top",
     )
 
