@@ -53,25 +53,53 @@ class BatteryIndicator:
             draw_obj: PIL ImageDraw object to draw on.
         """
         percent: int = self.battery.get_percent()
-        text: str = f"{percent}%"
         
-        # Get text dimensions for background
-        bbox = self.font.getbbox(text)
-        text_width: int = bbox[2] - bbox[0]
-        text_height: int = bbox[3] - bbox[1]
+        # Battery dimensions
+        battery_width: int = 40
+        battery_height: int = 18
+        terminal_width: int = 3
+        terminal_height: int = 8
+        border_thickness: int = 2
         
-        # Draw white background
-        padding: int = 3
+        # Position for battery body
+        body_x: int = self.pos[0]
+        body_y: int = self.pos[1]
+        
+        # Draw battery body outline (light grey)
         draw_obj.rectangle(
-            [
-                (self.pos[0] - padding, self.pos[1] - padding),
-                (self.pos[0] + text_width + padding, self.pos[1] + text_height + padding)
-            ],
-            fill=(255, 255, 255)
+            [(body_x, body_y), (body_x + battery_width, body_y + battery_height)],
+            outline=(200, 200, 200),
+            width=border_thickness
         )
         
-        # Draw black text
-        draw_obj.text(self.pos, text, font=self.font, fill=(0, 0, 0))
+        # Draw battery terminal (light grey)
+        terminal_x: int = body_x + battery_width
+        terminal_y: int = body_y + (battery_height - terminal_height) // 2
+        draw_obj.rectangle(
+            [(terminal_x, terminal_y), (terminal_x + terminal_width, terminal_y + terminal_height)],
+            fill=(200, 200, 200)
+        )
+        
+        # Calculate fill width based on battery percentage
+        inner_padding: int = border_thickness + 1
+        fill_area_width: int = battery_width - (inner_padding * 2)
+        fill_width: int = int(fill_area_width * (percent / 100))
+        
+        # Draw battery fill (white)
+        if fill_width > 0:
+            draw_obj.rectangle(
+                [
+                    (body_x + inner_padding, body_y + inner_padding),
+                    (body_x + inner_padding + fill_width, body_y + battery_height - inner_padding)
+                ],
+                fill=(255, 255, 255)
+            )
+        
+        # Draw percentage text next to battery
+        text: str = f"{percent}%"
+        text_x: int = terminal_x + terminal_width + 5
+        text_y: int = body_y + 2
+        draw_obj.text((text_x, text_y), text, font=self.font, fill=(255, 255, 255))
 
 
 class BasePage:
@@ -376,7 +404,7 @@ class MenuApp:
     IMAGE_SPACING: int = 10
     BODY_LINE_SPACING: int = 4
     PAGE_BOTTOM_MARGIN: int = 10
-    TOP_BAR_HEIGHT: int = 30
+    TOP_BAR_HEIGHT: int = 35
     POKEMON_IMAGE_SIZE: int = 100
 
     def __init__(self, root_menu: Menu) -> None:
