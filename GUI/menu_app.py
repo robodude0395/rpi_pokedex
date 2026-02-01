@@ -33,6 +33,9 @@ class BatteryIndicator:
         font_color: Tuple[int, int, int] = (255, 255, 255),
         right_padding: int = 0,
         battery_font_size: int = 12,
+        bg_color: Tuple[int, int, int] = (128, 128, 128),
+        fill_color: Tuple[int, int, int] = (0, 255, 0),
+        outline_color: Tuple[int, int, int] = (200, 200, 200),
     ) -> None:
         """
         Initialize battery indicator.
@@ -43,6 +46,9 @@ class BatteryIndicator:
             font_color: RGB color tuple for the text.
             right_padding: Right padding in pixels from screen edge.
             battery_font_size: Font size for battery percentage text.
+            bg_color: RGB color tuple for battery background.
+            fill_color: RGB color tuple for battery fill.
+            outline_color: RGB color tuple for battery outline and terminal.
         """
         self.battery: BatteryReader = BatteryReader()
         self.font: ImageFont.FreeTypeFont = font
@@ -50,6 +56,9 @@ class BatteryIndicator:
         self.font_color: Tuple[int, int, int] = font_color
         self.right_padding: int = right_padding
         self.battery_font_size: int = battery_font_size
+        self.bg_color: Tuple[int, int, int] = bg_color
+        self.fill_color: Tuple[int, int, int] = fill_color
+        self.outline_color: Tuple[int, int, int] = outline_color
 
     def draw(self, draw_obj: ImageDraw.ImageDraw) -> None:
         """
@@ -72,10 +81,11 @@ class BatteryIndicator:
         body_x: int = self.pos[0] - battery_width - terminal_width - self.right_padding
         body_y: int = self.pos[1]
         
-        # Draw battery body outline (light grey)
+        # Draw battery body with grey background
         draw_obj.rectangle(
             [(body_x, body_y), (body_x + battery_width, body_y + battery_height)],
-            outline=(200, 200, 200),
+            fill=self.bg_color,
+            outline=self.outline_color,
             width=border_thickness
         )
         
@@ -84,7 +94,7 @@ class BatteryIndicator:
         terminal_y: int = body_y + (battery_height - terminal_height) // 2
         draw_obj.rectangle(
             [(terminal_x, terminal_y), (terminal_x + terminal_width, terminal_y + terminal_height)],
-            fill=(200, 200, 200)
+            fill=self.outline_color
         )
         
         # Calculate fill width based on battery percentage
@@ -92,14 +102,14 @@ class BatteryIndicator:
         fill_area_width: int = battery_width - (inner_padding * 2)
         fill_width: int = int(fill_area_width * (percent / 100))
         
-        # Draw battery fill (white)
+        # Draw battery fill (green)
         if fill_width > 0:
             draw_obj.rectangle(
                 [
                     (body_x + inner_padding, body_y + inner_padding),
                     (body_x + inner_padding + fill_width, body_y + battery_height - inner_padding)
                 ],
-                fill=(255, 255, 255)
+                fill=self.fill_color
             )
         
         # Create smaller font for battery percentage
@@ -120,19 +130,8 @@ class BatteryIndicator:
         text_x: int = body_x + (battery_width - text_width) // 2
         text_y: int = body_y + (battery_height - text_height) // 2 - 1
         
-        # Determine text color based on what's behind the text center
-        # Text center is at battery_width / 2, so check if fill extends past center
-        battery_center: int = battery_width // 2
-        fill_end_position: int = inner_padding + fill_width
-        
-        if fill_end_position > battery_center:
-            # Text is over white fill - use black text
-            text_color = (0, 0, 0)
-        else:
-            # Text is over empty area - use white text
-            text_color = (255, 255, 255)
-        
-        draw_obj.text((text_x, text_y), text, font=battery_font, fill=text_color)
+        # Draw text with configured color
+        draw_obj.text((text_x, text_y), text, font=battery_font, fill=self.font_color)
 
 
 class BasePage:
