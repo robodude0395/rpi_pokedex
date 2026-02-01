@@ -454,6 +454,7 @@ class MenuApp:
             "Monocraft.ttf"
         )
         return ImageFont.truetype(font_path, size)
+
     def __init__(self, root_menu: Menu) -> None:
         """
         Initialize the menu application.
@@ -476,6 +477,23 @@ class MenuApp:
         self.battery_indicator: BatteryIndicator = BatteryIndicator(
             self.font, left_padding=10, battery_font_size=10
         )
+
+    def _get_page_content_width(self) -> int:
+        """Calculate available width for page content.
+        
+        Returns:
+            Content width in pixels.
+        """
+        return self.disp.width - (self.PADDING_HORIZONTAL * 2)
+
+    def _display_image(self, image: Image.Image) -> None:
+        """Rotate and display image on screen.
+        
+        Args:
+            image: Image to display.
+        """
+        image = image.rotate(270)
+        self.disp.ShowImage(image)
 
     def _create_display_image(self) -> Tuple[Image.Image, ImageDraw.ImageDraw]:
         """Create a new display image with battery indicator.
