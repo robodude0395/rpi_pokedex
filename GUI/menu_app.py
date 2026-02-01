@@ -249,6 +249,7 @@ class MenuApp:
         "Monocraft.ttf"
     )
     FONT_SIZE: int = 22
+    BODY_FONT_SIZE: int = 16
     DEBOUNCE_DELAY: float = 0.1
 
     def __init__(self, root_menu: Menu) -> None:
@@ -266,9 +267,14 @@ class MenuApp:
             self.FONT_PATH,
             self.FONT_SIZE
         )
+        self.body_font: ImageFont.FreeTypeFont = ImageFont.truetype(
+            self.FONT_PATH,
+            self.BODY_FONT_SIZE
+        )
         self.current_menu = root_menu
         self.menu_stack: List[Menu] = []
         self.current_page: Optional[Page] = None
+        self.scroll_offset: int = 0
         self.running: bool = True
         self.battery_indicator: BatteryIndicator = BatteryIndicator(self.font)
 
@@ -351,11 +357,15 @@ class MenuApp:
         disp: ST7789.ST7789 = self.disp
 
         if disp.digital_read(disp.GPIO_KEY_DOWN_PIN) == 1:
-            if not self.current_page:
+            if self.current_page:
+                self._scroll_page_down()
+            else:
                 self.current_menu.next()
             time.sleep(self.DEBOUNCE_DELAY)
         elif disp.digital_read(disp.GPIO_KEY_UP_PIN) == 1:
-            if not self.current_page:
+            if self.current_page:
+                self._scroll_page_up()
+            else:
                 self.current_menu.prev()
             time.sleep(self.DEBOUNCE_DELAY)
         elif disp.digital_read(disp.GPIO_KEY2_PIN) == 1:
@@ -382,6 +392,7 @@ class MenuApp:
             self.navigate_to_menu(target)
         elif isinstance(target, Page):
             self.current_page = target
+            self.scroll_offset = 0
         elif callable(target):
             target()
 
@@ -429,20 +440,42 @@ class MenuApp:
                 image.paste(page_image, (img_x, y))
                 content_width -= (page_image.width + 10)
 
-        # Draw wrapped text
+        # Draw wrapped text with scrolling
         lines: List[str] = page._wrap_text(
             page.text,
-            self.font,
+            self.body_font,
             content_width
         )
-        for line in lines:
-            if y + self.FONT_SIZE > self.disp.height - 10:
+        line_height: int = self.BODY_FONT_SIZE + 4
+        start_line: int = self.scroll_offset
+        
+        for i, line in enumerate(lines[start_line:]):
+            if y + self.BODY_FONT_SIZE > self.disp.height - 10:
                 break  # Stop if we run out of space
-            draw.text((x, y), line, font=self.font, fill=self.FG_COLOR)
-            y += self.FONT_SIZE + 4
+            draw.text((x, y), line, font=self.body_font, fill=self.FG_COLOR)
+            y += line_height
 
         image = image.rotate(270)
         self.disp.ShowImage(image)
+
+    def _scroll_page_up(self) -> None:
+        """Scroll page content up (show earlier lines)."""
+        if self.scroll_offset > 0:
+            self.scroll_offset -= 1
+
+    def _scroll_page_down(self) -> None:
+        """Scroll page content down (show later lines)."""
+        if self.current_page:
+            # Calculate total lines
+            content_width: int = self.disp.width - 20
+            lines: List[str] = self.current_page._wrap_text(
+                self.current_page.text,
+                self.body_font,
+                content_width
+            )
+            # Don't scroll past the last line
+            if self.scroll_offset < len(lines) - 1:
+                self.scroll_offset += 1
 
     def run(self) -> None:
         """
