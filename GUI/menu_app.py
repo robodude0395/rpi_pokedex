@@ -120,32 +120,19 @@ class BatteryIndicator:
         text_x: int = body_x + (battery_width - text_width) // 2
         text_y: int = body_y + (battery_height - text_height) // 2 - 1
         
-        # Draw white text (for parts over black/empty background)
-        draw_obj.text((text_x, text_y), text, font=battery_font, fill=(255, 255, 255))
+        # Determine text color based on what's behind the text center
+        # Text center is at battery_width / 2, so check if fill extends past center
+        battery_center: int = battery_width // 2
+        fill_end_position: int = inner_padding + fill_width
         
-        # Calculate fill end position
-        fill_end_x: int = body_x + inner_padding + fill_width
+        if fill_end_position > battery_center:
+            # Text is over white fill - use black text
+            text_color = (0, 0, 0)
+        else:
+            # Text is over empty area - use white text
+            text_color = (255, 255, 255)
         
-        # If text overlaps with fill area, overlay black text for that portion only
-        if fill_end_x > text_x:
-            # Access the underlying image
-            base_img: Image.Image = draw_obj._image
-            
-            # Create temporary image with black text
-            temp_img: Image.Image = Image.new('RGBA', base_img.size, (0, 0, 0, 0))
-            temp_draw: ImageDraw.ImageDraw = ImageDraw.Draw(temp_img)
-            temp_draw.text((text_x, text_y), text, font=battery_font, fill=(0, 0, 0, 255))
-            
-            # Create mask for fill region only
-            mask: Image.Image = Image.new('L', base_img.size, 0)
-            mask_draw: ImageDraw.ImageDraw = ImageDraw.Draw(mask)
-            mask_draw.rectangle(
-                [(body_x + inner_padding, 0), (fill_end_x, base_img.height)],
-                fill=255
-            )
-            
-            # Composite black text only where the white fill is
-            base_img.paste(temp_img, (0, 0), mask)
+        draw_obj.text((text_x, text_y), text, font=battery_font, fill=text_color)
 
 
 class BasePage:
