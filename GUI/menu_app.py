@@ -774,7 +774,7 @@ def create_sample_menus() -> Menu:
     bulbasaur_page = PokemonDescriptionPage(
         name="Bulbasaur",
         dex_number=1,
-        types=[("Grass", (120, 200, 80)), ("Poison", (160, 64, 160), ("Bitch", (90, 100, 200))],
+        types=[("Grass", (120, 200, 80)), ("Poison", (160, 64, 160), ("Bitch", (90, 100, 200)))],
         height="0.7m",
         weight="6.9kg",
         description="Bulbasaur can be seen napping in bright sunlight. There is a seed on its back. By soaking up the sun's rays, the seed grows progressively larger.",
