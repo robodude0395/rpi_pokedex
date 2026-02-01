@@ -1,0 +1,31 @@
+              .__         .___             
+_____________ |__|      __| _/____ ___  ___
+\_  __ \____ \|  |     / __ |/ __ \\  \/  /
+ |  | \/  |_> >  |    / /_/ \  ___/ >    < 
+ |__|  |   __/|__|____\____ |\___  >__/\_ \
+       |__|     /_____/    \/    \/      \/
+`;-.          ___,
+  `.`\_...._/`.-"`
+    \        /      ,
+    /()   () \    .' `-._
+   |)  .    ()\  /   _.'
+   \  -'-     ,; '. <
+    ;.__     ,;|   > \
+   / ,    / ,  |.-'.-'
+  (_/    (_/ ,;|.<`
+    \    ,     ;-`
+     >   \    /
+    (_,-'`> .'
+jgs      (_,'
+
+Welcome to my lil' pokedex. 
+This is a project I began a while ago in order to build upon my newfound Data Skills such as:
+
+-Pulling data from the web using a script
+-Putting said data onto a DB
+-Writing a whole ass library to display the data on a peripheral equivalent of a f****ing potato
+-Somehow getting farther with the project than I expected...
+
+In essence I'm making a poor man's pokedex because this is my odd definition of fun.
+
+Anyways, enjoy this lil' device that is capable of showing you which elemental animals are more pokey than others!

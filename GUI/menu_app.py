@@ -567,10 +567,8 @@ def create_sample_menus() -> Menu:
     )
 
     about_page = Page(
-        title="About Pokedex",
-        text="Raspberry Pi Pokedex v1.0. A portable Pokemon encyclopedia "
-             "with information and images of your favorite Pokemon. "
-             "Navigate using the buttons and explore the world of Pokemon!",
+        title="About",
+        text=open("about.txt").read(),
         image_path=None,
         image_position="top",
     )
