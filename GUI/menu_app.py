@@ -893,6 +893,11 @@ def create_sample_menus() -> Menu:
         image_size=(100, 100),
     )
 
+    gen_menu = Menu(
+        ("Gen_1", pokemon_menu),
+        ("Gen_2", None)
+    )
+
     # Pokemon menu
     pokemon_menu = Menu(
         [
@@ -920,7 +925,7 @@ def create_sample_menus() -> Menu:
 
     main_menu = Menu(
         [
-            ("Pokedex", pokemon_menu),
+            ("Pokedex", gen_menu),
             ("Settings", settings_menu),
             ("About", about_page),
         ],
