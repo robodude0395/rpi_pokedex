@@ -176,18 +176,22 @@ class BulbapediaScraper:
         details = {}
 
         # Extract from the info box - look for the table that contains Pokédex data
-        # The main infobox typically has specific styling and contains species/type info
-        infobox = None
-        tables = soup.find_all('table', class_='roundy')
-        for table in tables:
-            # Look for a table that contains "Species" or "Type" row
-            if table.find('th', string=re.compile(r'Species|Type', re.IGNORECASE)):
-                infobox = table
-                break
-
-        # Fallback to first roundy table if specific one not found
-        if not infobox and tables:
-            infobox = tables[0]
+        # The main infobox has class "roundy infobox"
+        infobox = soup.find('table', class_='roundy infobox')
+        
+        # Fallback: look for a table that contains "Species" or "Type" row
+        if not infobox:
+            tables = soup.find_all('table', class_='roundy')
+            for table in tables:
+                if table.find('th', string=re.compile(r'Species|Type', re.IGNORECASE)):
+                    infobox = table
+                    break
+        
+        # Last fallback to first roundy table if specific one not found
+        if not infobox:
+            tables = soup.find_all('table', class_='roundy')
+            if tables:
+                infobox = tables[0]
 
         if infobox:
             # Extract types
@@ -215,14 +219,6 @@ class BulbapediaScraper:
                 # Species
                 if 'species' in header_text:
                     details['species'] = cell.get_text(strip=True)
-
-                # Height
-                elif 'height' in header_text:
-                    details['height'] = cell.get_text(separator=' ', strip=True)
-
-                # Weight
-                elif 'weight' in header_text:
-                    details['weight'] = cell.get_text(separator=' ', strip=True)
 
                 # Gender ratio
                 elif 'gender' in header_text:
@@ -265,6 +261,32 @@ class BulbapediaScraper:
                         details['pokedex_color'] = color_link.get_text(strip=True)
                     else:
                         details['pokedex_color'] = cell.get_text(strip=True)
+
+            # Extract Height and Weight from td elements with nested tables
+            # Height and Weight are in <td class="roundy"> tags that contain <b> tags
+            all_cells = infobox.find_all('td', class_='roundy')
+            for cell in all_cells:
+                # Look for a <b> tag that contains "Height" or "Weight"
+                bold_tag = cell.find('b')
+                if bold_tag:
+                    # Get text from the bold tag (includes nested anchor/span tags)
+                    label_text = bold_tag.get_text(strip=True).lower()
+                    
+                    # Find the nested table in this cell
+                    nested_table = cell.find('table', class_='roundy')
+                    if nested_table:
+                        # Get the first row's cells (which contain the measurements)
+                        first_row = nested_table.find('tr')
+                        if first_row:
+                            measure_cells = first_row.find_all('td')
+                            if len(measure_cells) >= 2:
+                                # Get metric measurement (second cell)
+                                metric = measure_cells[1].get_text(strip=True)
+                                
+                                if 'height' in label_text:
+                                    details['height'] = metric
+                                elif 'weight' in label_text:
+                                    details['weight'] = metric
 
         # Extract Abilities from dedicated abilities section
         # Look for <b><a href="..." title="Abilities">...</a></b>
@@ -371,6 +393,26 @@ class BulbapediaScraper:
                 if '.png' in src and 'archives' in src and 'MS' not in src:
                     if src:
                         details['image_url'] = 'https:' + src if src.startswith('//') else src
+                        break
+
+        # Extract footprint image (e.g., F0001.png format)
+        footprint_url = None
+        for img in image_tags:
+            src = img.get('src', '')
+            # Look for footprint images that match pattern like F0001.png
+            if re.search(r'/F\d{4}\.png', src):
+                # Also check that it's 16x16 (typical footprint size)
+                width = img.get('width', '')
+                height = img.get('height', '')
+                if width == '16' and height == '16':
+                    if src.startswith('//'):
+                        footprint_url = 'https:' + src
+                    elif src.startswith('/'):
+                        footprint_url = 'https://bulbapedia.bulbagarden.net' + src
+                    else:
+                        footprint_url = src
+                    if footprint_url:
+                        details['footprint_url'] = footprint_url
                         break
 
         # Helper function to clean text (remove citation references)
@@ -522,12 +564,12 @@ class BulbapediaScraper:
         # Create details file
         details_path = os.path.join(pokemon_dir, 'details.json')
 
-        # Build the complete data structure, excluding image_url
-        details_copy = {k: v for k, v in details.items() if k != 'image_url'}
+        # Build the complete data structure, excluding image_url and footprint_url
+        details_copy = {k: v for k, v in details.items() if k not in ['image_url', 'footprint_url']}
         pokemon_data = {
             'name': pokemon_name,
             'pokedex_number': pokemon_number,
-            **details_copy  # Merge all the scraped details (without image_url)
+            **details_copy  # Merge all the scraped details (without image_url and footprint_url)
         }
 
         # Write as JSON
@@ -590,6 +632,21 @@ class BulbapediaScraper:
                     self.download_image(image_url, name, pokemon_dir)
                 else:
                     print(f"  No image found for {name}")
+
+                # Download footprint image if available
+                footprint_url = details.get('footprint_url')
+                if footprint_url:
+                    try:
+                        response = requests.get(footprint_url, headers=self.headers, timeout=30)
+                        response.raise_for_status()
+                        footprint_path = os.path.join(pokemon_dir, 'footprint.png')
+                        with open(footprint_path, 'wb') as f:
+                            f.write(response.content)
+                        print(f"  Downloaded footprint: footprint.png")
+                    except requests.RequestException as e:
+                        print(f"  Error downloading footprint: {e}")
+                else:
+                    print(f"  No footprint found for {name}")
             else:
                 print(f"  Failed to scrape details for {name}")
 
@@ -603,7 +660,7 @@ def main():
     """Example usage"""
     # Scrape Generation 1
     # Set debug_mode=True to only process one Pokemon for testing
-    scraper = BulbapediaScraper(generation=1, debug_mode=False)
+    scraper = BulbapediaScraper(generation=1, debug_mode=True)
     scraper.scrape_generation()
 
 
