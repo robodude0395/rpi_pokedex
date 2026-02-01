@@ -249,8 +249,20 @@ class MenuApp:
         "Monocraft.ttf"
     )
     FONT_SIZE: int = 22
+    MENU_FONT_SIZE: int = 16
     BODY_FONT_SIZE: int = 16
     DEBOUNCE_DELAY: float = 0.1
+    
+    # Padding and spacing constants
+    PADDING_HORIZONTAL: int = 10
+    PADDING_VERTICAL: int = 5
+    PADDING_EDGE: int = 5
+    HIGHLIGHT_PADDING: int = 2
+    MENU_ITEM_SPACING: int = 8
+    TITLE_SPACING: int = 10
+    IMAGE_SPACING: int = 10
+    BODY_LINE_SPACING: int = 4
+    PAGE_BOTTOM_MARGIN: int = 10
 
     def __init__(self, root_menu: Menu) -> None:
         """
@@ -266,6 +278,10 @@ class MenuApp:
         self.font: ImageFont.FreeTypeFont = ImageFont.truetype(
             self.FONT_PATH,
             self.FONT_SIZE
+        )
+        self.menu_font: ImageFont.FreeTypeFont = ImageFont.truetype(
+            self.FONT_PATH,
+            self.MENU_FONT_SIZE
         )
         self.body_font: ImageFont.FreeTypeFont = ImageFont.truetype(
             self.FONT_PATH,
@@ -297,36 +313,36 @@ class MenuApp:
         y: int = 0
         if menu.title:
             draw.text(
-                (10, y),
+                (self.PADDING_HORIZONTAL, y),
                 menu.title,
                 font=self.font,
                 fill=self.FG_COLOR
             )
-            y += self.FONT_SIZE + 5
+            y += self.FONT_SIZE + self.PADDING_VERTICAL
 
         for i, (item_text, _) in enumerate(menu.items):
             if i == menu.selected:
                 draw.rectangle(
                     [
-                        (5, y - 2),
-                        (self.disp.width - 5, y + self.FONT_SIZE + 2)
+                        (self.PADDING_EDGE, y - self.HIGHLIGHT_PADDING),
+                        (self.disp.width - self.PADDING_EDGE, y + self.MENU_FONT_SIZE + self.HIGHLIGHT_PADDING)
                     ],
                     fill=self.HIGHLIGHT_BG,
                 )
                 draw.text(
-                    (10, y),
+                    (self.PADDING_HORIZONTAL, y),
                     item_text,
-                    font=self.font,
+                    font=self.menu_font,
                     fill=self.HIGHLIGHT_COLOR
                 )
             else:
                 draw.text(
-                    (10, y),
+                    (self.PADDING_HORIZONTAL, y),
                     item_text,
-                    font=self.font,
+                    font=self.menu_font,
                     fill=self.FG_COLOR
                 )
-            y += self.FONT_SIZE + 8
+            y += self.MENU_FONT_SIZE + self.MENU_ITEM_SPACING
 
         image = image.rotate(270)
         self.disp.ShowImage(image)
@@ -412,8 +428,8 @@ class MenuApp:
         self.battery_indicator.draw(draw)
 
         y: int = 0
-        x: int = 10
-        content_width: int = self.disp.width - 20
+        x: int = self.PADDING_HORIZONTAL
+        content_width: int = self.disp.width - (self.PADDING_HORIZONTAL * 2)
 
         # Draw title
         draw.text(
@@ -422,7 +438,7 @@ class MenuApp:
             font=self.font,
             fill=self.FG_COLOR
         )
-        y += self.FONT_SIZE + 10
+        y += self.FONT_SIZE + self.TITLE_SPACING
 
         # Load and position image
         page_image: Optional[Image.Image] = page._load_image()
@@ -430,15 +446,15 @@ class MenuApp:
             if page.image_position == "top":
                 img_x: int = (self.disp.width - page_image.width) // 2
                 image.paste(page_image, (img_x, y))
-                y += page_image.height + 10
+                y += page_image.height + self.IMAGE_SPACING
             elif page.image_position == "left":
                 image.paste(page_image, (x, y))
-                x += page_image.width + 10
-                content_width -= (page_image.width + 10)
+                x += page_image.width + self.IMAGE_SPACING
+                content_width -= (page_image.width + self.IMAGE_SPACING)
             elif page.image_position == "right":
-                img_x = self.disp.width - page_image.width - 10
+                img_x = self.disp.width - page_image.width - self.PADDING_HORIZONTAL
                 image.paste(page_image, (img_x, y))
-                content_width -= (page_image.width + 10)
+                content_width -= (page_image.width + self.IMAGE_SPACING)
 
         # Draw wrapped text with scrolling
         lines: List[str] = page._wrap_text(
@@ -446,11 +462,11 @@ class MenuApp:
             self.body_font,
             content_width
         )
-        line_height: int = self.BODY_FONT_SIZE + 4
+        line_height: int = self.BODY_FONT_SIZE + self.BODY_LINE_SPACING
         start_line: int = self.scroll_offset
         
         for i, line in enumerate(lines[start_line:]):
-            if y + self.BODY_FONT_SIZE > self.disp.height - 10:
+            if y + self.BODY_FONT_SIZE > self.disp.height - self.PAGE_BOTTOM_MARGIN:
                 break  # Stop if we run out of space
             draw.text((x, y), line, font=self.body_font, fill=self.FG_COLOR)
             y += line_height
@@ -467,7 +483,7 @@ class MenuApp:
         """Scroll page content down (show later lines)."""
         if self.current_page:
             # Calculate total lines
-            content_width: int = self.disp.width - 20
+            content_width: int = self.disp.width - (self.PADDING_HORIZONTAL * 2)
             lines: List[str] = self.current_page._wrap_text(
                 self.current_page.text,
                 self.body_font,
