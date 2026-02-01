@@ -30,7 +30,7 @@ class BatteryIndicator:
         self,
         font: ImageFont.FreeTypeFont,
         pos: Tuple[int, int] = (200, 5),
-        font_color: Tuple[int, int, int] = (255, 255, 255),
+        font_color: Tuple[int, int, int] = (0, 0, 0),
         right_padding: int = 0,
         battery_font_size: int = 12,
         bg_color: Tuple[int, int, int] = (128, 128, 128),
