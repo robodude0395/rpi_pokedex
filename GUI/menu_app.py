@@ -571,6 +571,7 @@ def create_sample_menus() -> Menu:
         text=open("about.txt").read(),
         image_path='icon.jpg',
         image_position="top",
+        image)size=(200,200)
     )
 
     main_menu = Menu(
