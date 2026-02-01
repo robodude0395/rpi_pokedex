@@ -900,12 +900,13 @@ def create_sample_menus() -> Menu:
             ("Pikachu", pikachu_page),
             ("Charizard", charizard_page),
         ],
-        title="Pokedex",
+        title="Pokedex"
     )
 
     gen_menu = Menu(
-        ("Gen_1", gen1_menu),
-        ("Gen_2", None)
+        [("Gen_1", gen1_menu),
+        ("Gen_2", None)],
+        title="Generations"
     )
 
     settings_menu = Menu(
