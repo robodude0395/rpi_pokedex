@@ -31,7 +31,7 @@ class BatteryIndicator:
         font: ImageFont.FreeTypeFont,
         pos: Tuple[int, int] = (200, 5),
         font_color: Tuple[int, int, int] = (255, 255, 255),
-        left_padding: int = 0,
+        right_padding: int = 0,
         battery_font_size: int = 12,
     ) -> None:
         """
@@ -41,14 +41,14 @@ class BatteryIndicator:
             font: TrueType font for rendering text.
             pos: Position tuple (x, y) for battery display.
             font_color: RGB color tuple for the text.
-            left_padding: Left padding in pixels.
+            right_padding: Right padding in pixels from screen edge.
             battery_font_size: Font size for battery percentage text.
         """
         self.battery: BatteryReader = BatteryReader()
         self.font: ImageFont.FreeTypeFont = font
         self.pos: Tuple[int, int] = pos
         self.font_color: Tuple[int, int, int] = font_color
-        self.left_padding: int = left_padding
+        self.right_padding: int = right_padding
         self.battery_font_size: int = battery_font_size
 
     def draw(self, draw_obj: ImageDraw.ImageDraw) -> None:
@@ -67,8 +67,9 @@ class BatteryIndicator:
         terminal_height: int = 8
         border_thickness: int = 2
         
-        # Position for battery body (with left padding)
-        body_x: int = self.pos[0] + self.left_padding
+        # Position for battery body (from right edge with padding)
+        # pos[0] is display width minus battery width minus padding
+        body_x: int = self.pos[0] - battery_width - terminal_width - self.right_padding
         body_y: int = self.pos[1]
         
         # Draw battery body outline (light grey)
@@ -475,7 +476,7 @@ class MenuApp:
         self.scroll_offset: int = 0
         self.running: bool = True
         self.battery_indicator: BatteryIndicator = BatteryIndicator(
-            self.font, left_padding=20, battery_font_size=10
+            self.font, right_padding=10, battery_font_size=10
         )
 
     def _get_page_content_width(self) -> int:
