@@ -54,7 +54,24 @@ class BatteryIndicator:
         """
         percent: int = self.battery.get_percent()
         text: str = f"{percent}%"
-        draw_obj.text(self.pos, text, font=self.font, fill=self.font_color)
+        
+        # Get text dimensions for background
+        bbox = self.font.getbbox(text)
+        text_width: int = bbox[2] - bbox[0]
+        text_height: int = bbox[3] - bbox[1]
+        
+        # Draw white background
+        padding: int = 3
+        draw_obj.rectangle(
+            [
+                (self.pos[0] - padding, self.pos[1] - padding),
+                (self.pos[0] + text_width + padding, self.pos[1] + text_height + padding)
+            ],
+            fill=(255, 255, 255)
+        )
+        
+        # Draw black text
+        draw_obj.text(self.pos, text, font=self.font, fill=(0, 0, 0))
 
 
 class BasePage:
@@ -362,6 +379,7 @@ class MenuApp:
     IMAGE_SPACING: int = 10
     BODY_LINE_SPACING: int = 4
     PAGE_BOTTOM_MARGIN: int = 10
+    TOP_BAR_HEIGHT: int = 30
 
     def __init__(self, root_menu: Menu) -> None:
         """
@@ -538,7 +556,7 @@ class MenuApp:
         draw: ImageDraw.ImageDraw = ImageDraw.Draw(image)
         self.battery_indicator.draw(draw)
 
-        y: int = 0
+        y: int = self.TOP_BAR_HEIGHT
         x: int = self.PADDING_HORIZONTAL
         content_width: int = self.disp.width - (self.PADDING_HORIZONTAL * 2)
 
@@ -603,7 +621,7 @@ class MenuApp:
         draw: ImageDraw.ImageDraw = ImageDraw.Draw(image)
         self.battery_indicator.draw(draw)
 
-        y: int = self.PADDING_VERTICAL
+        y: int = self.TOP_BAR_HEIGHT
         x: int = self.PADDING_HORIZONTAL
         
         # Load Pokemon image (left side)
@@ -626,11 +644,11 @@ class MenuApp:
             width=1
         )
         
-        # Info content
-        info_text_x: int = info_x + 5
-        info_text_y: int = info_y + 5
+        # Info content with tighter spacing
+        info_text_x: int = info_x + 3
+        info_text_y: int = info_y + 3
         small_font: ImageFont.FreeTypeFont = self.body_font
-        line_height: int = self.BODY_FONT_SIZE + 2
+        line_height: int = self.BODY_FONT_SIZE + 1
         
         # Dex number
         dex_text: str = f"#{page.dex_number:03d}"
@@ -638,8 +656,8 @@ class MenuApp:
         info_text_y += line_height
         
         # Pokemon name
-        draw.text((info_text_x, info_text_y), page.name, font=self.menu_font, fill=self.FG_COLOR)
-        info_text_y += line_height + 2
+        draw.text((info_text_x, info_text_y), page.name, font=small_font, fill=self.FG_COLOR)
+        info_text_y += line_height
         
         # Species
         draw.text((info_text_x, info_text_y), page.species, font=small_font, fill=self.FG_COLOR)
@@ -651,22 +669,22 @@ class MenuApp:
         for type_name, type_color in page.types:
             # Draw type badge
             bbox = small_font.getbbox(type_name)
-            type_width: int = (bbox[2] - bbox[0]) + 8
-            type_height: int = self.BODY_FONT_SIZE + 4
+            type_width: int = (bbox[2] - bbox[0]) + 6
+            type_height: int = self.BODY_FONT_SIZE + 2
             
             draw.rectangle(
                 [(type_x, type_y), (type_x + type_width, type_y + type_height)],
                 fill=type_color
             )
             draw.text(
-                (type_x + 4, type_y + 2),
+                (type_x + 3, type_y + 1),
                 type_name,
                 font=small_font,
                 fill=(255, 255, 255)
             )
-            type_x += type_width + 5
+            type_x += type_width + 3
         
-        info_text_y += type_height + 4
+        info_text_y += type_height + 2
         
         # Height and Weight
         draw.text((info_text_x, info_text_y), f"Height: {page.height}", font=small_font, fill=self.FG_COLOR)
