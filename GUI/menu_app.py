@@ -202,13 +202,12 @@ class PokemonDescriptionPage(BasePage):
     """
     Specialized page for displaying Pokemon information.
 
-    Displays Pokemon image on left, info box on right (dex number, species,
+    Displays Pokemon image on left, info box on right (dex number,
     types, height, weight), and scrollable description text at bottom.
 
     Attributes:
         name: Pokemon name (used as title).
         dex_number: National Pokedex number.
-        species: Species description (e.g., "Seed Pokemon").
         types: List of (type_name, bg_color) tuples.
         height: Height as string (e.g., "0.7m").
         weight: Weight as string (e.g., "6.9kg").
@@ -220,7 +219,6 @@ class PokemonDescriptionPage(BasePage):
         self,
         name: str,
         dex_number: int,
-        species: str,
         types: List[Tuple[str, Tuple[int, int, int]]],
         height: str,
         weight: str,
@@ -233,7 +231,6 @@ class PokemonDescriptionPage(BasePage):
         Args:
             name: Pokemon name.
             dex_number: National Pokedex number.
-            species: Species classification.
             types: List of (type_name, bg_color_rgb) tuples.
             height: Height string.
             weight: Weight string.
@@ -243,7 +240,6 @@ class PokemonDescriptionPage(BasePage):
         super().__init__(name, description)
         self.name: str = name
         self.dex_number: int = dex_number
-        self.species: str = species
         self.types: List[Tuple[str, Tuple[int, int, int]]] = types
         self.height: str = height
         self.weight: str = weight
@@ -381,7 +377,7 @@ class MenuApp:
     BODY_LINE_SPACING: int = 4
     PAGE_BOTTOM_MARGIN: int = 10
     TOP_BAR_HEIGHT: int = 30
-    POKEMON_IMAGE_SIZE: int = 70
+    POKEMON_IMAGE_SIZE: int = 100
 
     def __init__(self, root_menu: Menu) -> None:
         """
@@ -659,34 +655,42 @@ class MenuApp:
         
         # Pokemon name
         draw.text((info_text_x, info_text_y), page.name, font=small_font, fill=self.FG_COLOR)
-        info_text_y += line_height
+        info_text_y += line_height + 2
         
-        # Species
-        draw.text((info_text_x, info_text_y), page.species, font=small_font, fill=self.FG_COLOR)
-        info_text_y += line_height
-        
-        # Types with background colors
+        # Types with background colors in 2-column grid
         type_y: int = info_text_y
         type_x: int = info_text_x
-        for type_name, type_color in page.types:
+        type_height: int = self.BODY_FONT_SIZE + 2
+        types_per_row: int = 2
+        max_type_width: int = (info_width - 6) // 2  # Divide available width by 2
+        
+        for idx, (type_name, type_color) in enumerate(page.types):
+            # Calculate position in grid
+            col: int = idx % types_per_row
+            row: int = idx // types_per_row
+            
+            # Position for this type badge
+            current_type_x: int = info_text_x + (col * (max_type_width + 3))
+            current_type_y: int = type_y + (row * (type_height + 2))
+            
             # Draw type badge
             bbox = small_font.getbbox(type_name)
-            type_width: int = (bbox[2] - bbox[0]) + 6
-            type_height: int = self.BODY_FONT_SIZE + 2
+            type_width: int = min((bbox[2] - bbox[0]) + 6, max_type_width)
             
             draw.rectangle(
-                [(type_x, type_y), (type_x + type_width, type_y + type_height)],
+                [(current_type_x, current_type_y), (current_type_x + type_width, current_type_y + type_height)],
                 fill=type_color
             )
             draw.text(
-                (type_x + 3, type_y + 1),
+                (current_type_x + 3, current_type_y + 1),
                 type_name,
                 font=small_font,
                 fill=(255, 255, 255)
             )
-            type_x += type_width + 3
         
-        info_text_y += type_height + 2
+        # Calculate total rows needed for types
+        num_rows: int = (len(page.types) + types_per_row - 1) // types_per_row
+        info_text_y += (num_rows * (type_height + 2)) + 2
         
         # Height and Weight
         draw.text((info_text_x, info_text_y), f"Height: {page.height}", font=small_font, fill=self.FG_COLOR)
@@ -770,7 +774,6 @@ def create_sample_menus() -> Menu:
     bulbasaur_page = PokemonDescriptionPage(
         name="Bulbasaur",
         dex_number=1,
-        species="Seed Pokemon",
         types=[("Grass", (120, 200, 80)), ("Poison", (160, 64, 160))],
         height="0.7m",
         weight="6.9kg",
