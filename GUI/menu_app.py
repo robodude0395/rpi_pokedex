@@ -267,7 +267,8 @@ class PokemonDescriptionPage(BasePage):
         try:
             img: Image.Image = Image.open(self.image_path)
             # Resize to fixed size for Pokemon sprites
-            img = img.resize((100, 100), Image.Resampling.LANCZOS)
+            from display_and_input import ST7789
+            img = img.resize((MenuApp.POKEMON_IMAGE_SIZE, MenuApp.POKEMON_IMAGE_SIZE), Image.Resampling.LANCZOS)
             self._cached_image = img
             return img
         except Exception as e:
@@ -380,6 +381,7 @@ class MenuApp:
     BODY_LINE_SPACING: int = 4
     PAGE_BOTTOM_MARGIN: int = 10
     TOP_BAR_HEIGHT: int = 30
+    POKEMON_IMAGE_SIZE: int = 70
 
     def __init__(self, root_menu: Menu) -> None:
         """
@@ -626,7 +628,7 @@ class MenuApp:
         
         # Load Pokemon image (left side)
         pokemon_image: Optional[Image.Image] = page._load_image()
-        image_width: int = 100
+        image_width: int = self.POKEMON_IMAGE_SIZE
         
         if pokemon_image:
             image.paste(pokemon_image, (x, y))
