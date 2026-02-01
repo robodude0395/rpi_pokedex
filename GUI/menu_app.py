@@ -32,6 +32,7 @@ class BatteryIndicator:
         pos: Tuple[int, int] = (200, 5),
         font_color: Tuple[int, int, int] = (255, 255, 255),
         left_padding: int = 0,
+        battery_font_size: int = 12,
     ) -> None:
         """
         Initialize battery indicator.
@@ -41,12 +42,14 @@ class BatteryIndicator:
             pos: Position tuple (x, y) for battery display.
             font_color: RGB color tuple for the text.
             left_padding: Left padding in pixels.
+            battery_font_size: Font size for battery percentage text.
         """
         self.battery: BatteryReader = BatteryReader()
         self.font: ImageFont.FreeTypeFont = font
         self.pos: Tuple[int, int] = pos
         self.font_color: Tuple[int, int, int] = font_color
         self.left_padding: int = left_padding
+        self.battery_font_size: int = battery_font_size
 
     def draw(self, draw_obj: ImageDraw.ImageDraw) -> None:
         """
@@ -98,24 +101,37 @@ class BatteryIndicator:
                 fill=(255, 255, 255)
             )
         
+        # Create smaller font for battery percentage
+        try:
+            battery_font: ImageFont.FreeTypeFont = MenuApp._load_font(
+                self.battery_font_size
+            )
+        except Exception:
+            battery_font = self.font  # Fallback to original font
+        
         # Draw percentage text overlaid on battery with contrast
         text: str = f"{percent}%"
-        bbox = self.font.getbbox(text)
+        bbox = battery_font.getbbox(text)
         text_width: int = bbox[2] - bbox[0]
         text_height: int = bbox[3] - bbox[1]
         
         # Center text on battery
         text_x: int = body_x + (battery_width - text_width) // 2
-        text_y: int = body_y + (battery_height - text_height) // 2 - 2
+        text_y: int = body_y + (battery_height - text_height) // 2 - 1
         
-        # Determine text color based on fill level for contrast
-        # Use white text on dark background, black text on white fill
-        if percent > 50:
-            text_color = (0, 0, 0)  # Black text on white fill
+        # Determine text color based on what's behind the text center
+        # Text center is at battery_width / 2, so check if fill extends past center
+        battery_center: int = battery_width // 2
+        fill_end_position: int = inner_padding + fill_width
+        
+        if fill_end_position > battery_center:
+            # Text is over white fill - use black text
+            text_color = (0, 0, 0)
         else:
-            text_color = (255, 255, 255)  # White text on dark background
+            # Text is over empty area - use white text
+            text_color = (255, 255, 255)
         
-        draw_obj.text((text_x, text_y), text, font=self.font, fill=text_color)
+        draw_obj.text((text_x, text_y), text, font=battery_font, fill=text_color)
 
 
 class BasePage:
@@ -421,8 +437,23 @@ class MenuApp:
     BODY_LINE_SPACING: int = 4
     PAGE_BOTTOM_MARGIN: int = 10
     TOP_BAR_HEIGHT: int = 35
-    POKEMON_IMAGE_SIZE: int = 100
-
+    POKEMON_IMAGE_SIZE: int = 100    
+    @staticmethod
+    def _load_font(size: int) -> ImageFont.FreeTypeFont:
+        """Load TrueType font with specified size.
+        
+        Args:
+            size: Font size in pixels.
+            
+        Returns:
+            Loaded font object.
+        """
+        font_path: str = os.path.join(
+            os.path.dirname(ST7789.__file__),
+            "Font",
+            "Monocraft.ttf"
+        )
+        return ImageFont.truetype(font_path, size)
     def __init__(self, root_menu: Menu) -> None:
         """
         Initialize the menu application.
@@ -434,26 +465,32 @@ class MenuApp:
         self.disp.Init()
         self.disp.clear()
         self.disp.bl_DutyCycle(50)
-        self.font: ImageFont.FreeTypeFont = ImageFont.truetype(
-            self.FONT_PATH,
-            self.FONT_SIZE
-        )
-        self.menu_font: ImageFont.FreeTypeFont = ImageFont.truetype(
-            self.FONT_PATH,
-            self.MENU_FONT_SIZE
-        )
-        self.body_font: ImageFont.FreeTypeFont = ImageFont.truetype(
-            self.FONT_PATH,
-            self.BODY_FONT_SIZE
-        )
+        self.font: ImageFont.FreeTypeFont = self._load_font(self.FONT_SIZE)
+        self.menu_font: ImageFont.FreeTypeFont = self._load_font(self.MENU_FONT_SIZE)
+        self.body_font: ImageFont.FreeTypeFont = self._load_font(self.BODY_FONT_SIZE)
         self.current_menu = root_menu
         self.menu_stack: List[Menu] = []
         self.current_page: Optional[Page] = None
         self.scroll_offset: int = 0
         self.running: bool = True
         self.battery_indicator: BatteryIndicator = BatteryIndicator(
-            self.font, left_padding=10
+            self.font, left_padding=10, battery_font_size=10
         )
+
+    def _create_display_image(self) -> Tuple[Image.Image, ImageDraw.ImageDraw]:
+        """Create a new display image with battery indicator.
+        
+        Returns:
+            Tuple of (image, draw) objects.
+        """
+        image: Image.Image = Image.new(
+            "RGB",
+            (self.disp.width, self.disp.height),
+            self.BG_COLOR
+        )
+        draw: ImageDraw.ImageDraw = ImageDraw.Draw(image)
+        self.battery_indicator.draw(draw)
+        return image, draw
 
     def draw_menu(self) -> None:
         """
@@ -463,13 +500,7 @@ class MenuApp:
         displays the battery indicator, and shows the result on screen.
         """
         menu = self.current_menu
-        image: Image.Image = Image.new(
-            "RGB",
-            (self.disp.width, self.disp.height),
-            self.BG_COLOR
-        )
-        draw: ImageDraw.ImageDraw = ImageDraw.Draw(image)
-        self.battery_indicator.draw(draw)
+        image, draw = self._create_display_image()
 
         y: int = 0
         if menu.title:
@@ -505,8 +536,7 @@ class MenuApp:
                 )
             y += self.MENU_FONT_SIZE + self.MENU_ITEM_SPACING
 
-        image = image.rotate(270)
-        self.disp.ShowImage(image)
+        self._display_image(image)
 
     def navigate_to_menu(self, target_menu: Menu) -> None:
         """
@@ -592,17 +622,11 @@ class MenuApp:
         Args:
             page: Page object to render.
         """
-        image: Image.Image = Image.new(
-            "RGB",
-            (self.disp.width, self.disp.height),
-            self.BG_COLOR
-        )
-        draw: ImageDraw.ImageDraw = ImageDraw.Draw(image)
-        self.battery_indicator.draw(draw)
+        image, draw = self._create_display_image()
 
         y: int = self.TOP_BAR_HEIGHT
         x: int = self.PADDING_HORIZONTAL
-        content_width: int = self.disp.width - (self.PADDING_HORIZONTAL * 2)
+        content_width: int = self._get_page_content_width()
 
         # Draw title
         draw.text(
@@ -647,8 +671,7 @@ class MenuApp:
             draw.text((x, y), line, font=self.body_font, fill=self.FG_COLOR)
             y += line_height
 
-        image = image.rotate(270)
-        self.disp.ShowImage(image)
+        self._display_image(image)
 
     def _draw_pokemon_page(self, page: PokemonDescriptionPage) -> None:
         """
@@ -657,13 +680,7 @@ class MenuApp:
         Args:
             page: PokemonDescriptionPage object to render.
         """
-        image: Image.Image = Image.new(
-            "RGB",
-            (self.disp.width, self.disp.height),
-            self.BG_COLOR
-        )
-        draw: ImageDraw.ImageDraw = ImageDraw.Draw(image)
-        self.battery_indicator.draw(draw)
+        image, draw = self._create_display_image()
 
         # Draw page title
         draw.text(
@@ -754,7 +771,7 @@ class MenuApp:
         # Description text (scrollable) below the image/info box
         desc_y: int = y + box_height + self.IMAGE_SPACING
         desc_x: int = self.PADDING_HORIZONTAL
-        content_width: int = self.disp.width - (self.PADDING_HORIZONTAL * 2)
+        content_width: int = self._get_page_content_width()
         
         lines: List[str] = page._wrap_text(
             page.description,
@@ -770,8 +787,7 @@ class MenuApp:
             draw.text((desc_x, desc_y), line, font=self.body_font, fill=self.FG_COLOR)
             desc_y += desc_line_height
 
-        image = image.rotate(270)
-        self.disp.ShowImage(image)
+        self._display_image(image)
 
     def _scroll_page_up(self) -> None:
         """Scroll page content up (show earlier lines)."""
@@ -782,7 +798,7 @@ class MenuApp:
         """Scroll page content down (show later lines)."""
         if self.current_page:
             # Calculate total lines
-            content_width: int = self.disp.width - (self.PADDING_HORIZONTAL * 2)
+            content_width: int = self._get_page_content_width()
             lines: List[str] = self.current_page._wrap_text(
                 self.current_page.text,
                 self.body_font,
