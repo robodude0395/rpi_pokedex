@@ -57,68 +57,27 @@ class BatteryIndicator:
         draw_obj.text(self.pos, text, font=self.font, fill=self.font_color)
 
 
-class Page:
+class BasePage:
     """
-    Represents a content page with text and optional image.
+    Base class for scrollable content pages.
 
-    Displays formatted content with an image and text that wraps
-    automatically based on the available space and font size.
+    Provides basic text display and scrolling functionality.
 
     Attributes:
         title: Page title displayed at the top.
         text: Main text content to display (wraps automatically).
-        image_path: Optional path to JPG/PNG image file.
-        image_position: Position of image ('top', 'left', or 'right').
-        image_size: Tuple of (width, height) for image scaling.
     """
 
-    def __init__(
-        self,
-        title: str,
-        text: str,
-        image_path: Optional[str] = None,
-        image_position: str = "top",
-        image_size: Optional[Tuple[int, int]] = None,
-    ) -> None:
+    def __init__(self, title: str, text: str) -> None:
         """
-        Initialize a content page.
+        Initialize a base page.
 
         Args:
             title: Title of the page.
             text: Main text content.
-            image_path: Optional path to image file (JPG/PNG).
-            image_position: Where to place image ('top', 'left', 'right').
-            image_size: Optional (width, height) tuple for image resize.
         """
         self.title: str = title
         self.text: str = text
-        self.image_path: Optional[str] = image_path
-        self.image_position: str = image_position
-        self.image_size: Optional[Tuple[int, int]] = image_size
-        self._cached_image: Optional[Image.Image] = None
-
-    def _load_image(self) -> Optional[Image.Image]:
-        """
-        Load and cache the page image.
-
-        Returns:
-            PIL Image object or None if no image or load fails.
-        """
-        if self._cached_image is not None:
-            return self._cached_image
-
-        if not self.image_path or not os.path.exists(self.image_path):
-            return None
-
-        try:
-            img: Image.Image = Image.open(self.image_path)
-            if self.image_size:
-                img = img.resize(self.image_size, Image.Resampling.LANCZOS)
-            self._cached_image = img
-            return img
-        except Exception as e:
-            print(f"Error loading image {self.image_path}: {e}")
-            return None
 
     def _wrap_text(
         self,
@@ -159,7 +118,147 @@ class Page:
         return lines
 
 
-MenuItem = Tuple[str, Optional[Union["Menu", "Page", Callable[[], None]]]]
+class Page(BasePage):
+    """
+    Represents a content page with text and optional image.
+
+    Displays formatted content with an image and text that wraps
+    automatically based on the available space and font size.
+
+    Attributes:
+        title: Page title displayed at the top.
+        text: Main text content to display (wraps automatically).
+        image_path: Optional path to JPG/PNG image file.
+        image_position: Position of image ('top', 'left', or 'right').
+        image_size: Tuple of (width, height) for image scaling.
+    """
+
+    def __init__(
+        self,
+        title: str,
+        text: str,
+        image_path: Optional[str] = None,
+        image_position: str = "top",
+        image_size: Optional[Tuple[int, int]] = None,
+    ) -> None:
+        """
+        Initialize a content page.
+
+        Args:
+            title: Title of the page.
+            text: Main text content.
+            image_path: Optional path to image file (JPG/PNG).
+            image_position: Where to place image ('top', 'left', 'right').
+            image_size: Optional (width, height) tuple for image resize.
+        """
+        super().__init__(title, text)
+        self.image_path: Optional[str] = image_path
+        self.image_position: str = image_position
+        self.image_size: Optional[Tuple[int, int]] = image_size
+        self._cached_image: Optional[Image.Image] = None
+
+    def _load_image(self) -> Optional[Image.Image]:
+        """
+        Load and cache the page image.
+
+        Returns:
+            PIL Image object or None if no image or load fails.
+        """
+        if self._cached_image is not None:
+            return self._cached_image
+
+        if not self.image_path or not os.path.exists(self.image_path):
+            return None
+
+        try:
+            img: Image.Image = Image.open(self.image_path)
+            if self.image_size:
+                img = img.resize(self.image_size, Image.Resampling.LANCZOS)
+            self._cached_image = img
+            return img
+        except Exception as e:
+            print(f"Error loading image {self.image_path}: {e}")
+            return None
+
+
+class PokemonDescriptionPage(BasePage):
+    """
+    Specialized page for displaying Pokemon information.
+
+    Displays Pokemon image on left, info box on right (dex number, species,
+    types, height, weight), and scrollable description text at bottom.
+
+    Attributes:
+        name: Pokemon name (used as title).
+        dex_number: National Pokedex number.
+        species: Species description (e.g., "Seed Pokemon").
+        types: List of (type_name, bg_color) tuples.
+        height: Height as string (e.g., "0.7m").
+        weight: Weight as string (e.g., "6.9kg").
+        description: Scrollable description text.
+        image_path: Path to Pokemon image file.
+    """
+
+    def __init__(
+        self,
+        name: str,
+        dex_number: int,
+        species: str,
+        types: List[Tuple[str, Tuple[int, int, int]]],
+        height: str,
+        weight: str,
+        description: str,
+        image_path: str,
+    ) -> None:
+        """
+        Initialize a Pokemon description page.
+
+        Args:
+            name: Pokemon name.
+            dex_number: National Pokedex number.
+            species: Species classification.
+            types: List of (type_name, bg_color_rgb) tuples.
+            height: Height string.
+            weight: Weight string.
+            description: Full description text (scrollable).
+            image_path: Path to Pokemon image.
+        """
+        super().__init__(name, description)
+        self.name: str = name
+        self.dex_number: int = dex_number
+        self.species: str = species
+        self.types: List[Tuple[str, Tuple[int, int, int]]] = types
+        self.height: str = height
+        self.weight: str = weight
+        self.description: str = description
+        self.image_path: str = image_path
+        self._cached_image: Optional[Image.Image] = None
+
+    def _load_image(self) -> Optional[Image.Image]:
+        """
+        Load and cache the Pokemon image.
+
+        Returns:
+            PIL Image object or None if load fails.
+        """
+        if self._cached_image is not None:
+            return self._cached_image
+
+        if not self.image_path or not os.path.exists(self.image_path):
+            return None
+
+        try:
+            img: Image.Image = Image.open(self.image_path)
+            # Resize to fixed size for Pokemon sprites
+            img = img.resize((100, 100), Image.Resampling.LANCZOS)
+            self._cached_image = img
+            return img
+        except Exception as e:
+            print(f"Error loading image {self.image_path}: {e}")
+            return None
+
+
+MenuItem = Tuple[str, Optional[Union["Menu", "BasePage", Callable[[], None]]]]
 
 
 class Menu:
@@ -406,15 +505,27 @@ class MenuApp:
         _, target = self.current_menu.get_selected()
         if isinstance(target, Menu):
             self.navigate_to_menu(target)
-        elif isinstance(target, Page):
+        elif isinstance(target, BasePage):
             self.current_page = target
             self.scroll_offset = 0
         elif callable(target):
             target()
 
-    def draw_page(self, page: Page) -> None:
+    def draw_page(self, page: BasePage) -> None:
         """
         Render a page with text and optional image.
+
+        Args:
+            page: Page object to render.
+        """
+        if isinstance(page, PokemonDescriptionPage):
+            self._draw_pokemon_page(page)
+        else:
+            self._draw_standard_page(page)
+
+    def _draw_standard_page(self, page: BasePage) -> None:
+        """
+        Render a standard page (Page or BasePage).
 
         Args:
             page: Page object to render.
@@ -441,7 +552,10 @@ class MenuApp:
         y += self.FONT_SIZE + self.TITLE_SPACING
 
         # Load and position image
-        page_image: Optional[Image.Image] = page._load_image()
+        page_image: Optional[Image.Image] = None
+        if isinstance(page, Page) and page.image_path:
+            page_image = page._load_image()
+            
         if page_image:
             if page.image_position == "top":
                 img_x: int = (self.disp.width - page_image.width) // 2
@@ -470,6 +584,113 @@ class MenuApp:
                 break  # Stop if we run out of space
             draw.text((x, y), line, font=self.body_font, fill=self.FG_COLOR)
             y += line_height
+
+        image = image.rotate(270)
+        self.disp.ShowImage(image)
+
+    def _draw_pokemon_page(self, page: PokemonDescriptionPage) -> None:
+        """
+        Render a Pokemon description page with image, info box, and description.
+
+        Args:
+            page: PokemonDescriptionPage object to render.
+        """
+        image: Image.Image = Image.new(
+            "RGB",
+            (self.disp.width, self.disp.height),
+            self.BG_COLOR
+        )
+        draw: ImageDraw.ImageDraw = ImageDraw.Draw(image)
+        self.battery_indicator.draw(draw)
+
+        y: int = self.PADDING_VERTICAL
+        x: int = self.PADDING_HORIZONTAL
+        
+        # Load Pokemon image (left side)
+        pokemon_image: Optional[Image.Image] = page._load_image()
+        image_width: int = 100
+        
+        if pokemon_image:
+            image.paste(pokemon_image, (x, y))
+        
+        # Info box (right side)
+        info_x: int = x + image_width + self.IMAGE_SPACING
+        info_y: int = y
+        info_width: int = self.disp.width - info_x - self.PADDING_HORIZONTAL
+        
+        # Draw info box background
+        box_height: int = 100
+        draw.rectangle(
+            [(info_x, info_y), (info_x + info_width, info_y + box_height)],
+            outline=self.FG_COLOR,
+            width=1
+        )
+        
+        # Info content
+        info_text_x: int = info_x + 5
+        info_text_y: int = info_y + 5
+        small_font: ImageFont.FreeTypeFont = self.body_font
+        line_height: int = self.BODY_FONT_SIZE + 2
+        
+        # Dex number
+        dex_text: str = f"#{page.dex_number:03d}"
+        draw.text((info_text_x, info_text_y), dex_text, font=small_font, fill=self.FG_COLOR)
+        info_text_y += line_height
+        
+        # Pokemon name
+        draw.text((info_text_x, info_text_y), page.name, font=self.menu_font, fill=self.FG_COLOR)
+        info_text_y += line_height + 2
+        
+        # Species
+        draw.text((info_text_x, info_text_y), page.species, font=small_font, fill=self.FG_COLOR)
+        info_text_y += line_height
+        
+        # Types with background colors
+        type_y: int = info_text_y
+        type_x: int = info_text_x
+        for type_name, type_color in page.types:
+            # Draw type badge
+            bbox = small_font.getbbox(type_name)
+            type_width: int = (bbox[2] - bbox[0]) + 8
+            type_height: int = self.BODY_FONT_SIZE + 4
+            
+            draw.rectangle(
+                [(type_x, type_y), (type_x + type_width, type_y + type_height)],
+                fill=type_color
+            )
+            draw.text(
+                (type_x + 4, type_y + 2),
+                type_name,
+                font=small_font,
+                fill=(255, 255, 255)
+            )
+            type_x += type_width + 5
+        
+        info_text_y += type_height + 4
+        
+        # Height and Weight
+        draw.text((info_text_x, info_text_y), f"Height: {page.height}", font=small_font, fill=self.FG_COLOR)
+        info_text_y += line_height
+        draw.text((info_text_x, info_text_y), f"Weight: {page.weight}", font=small_font, fill=self.FG_COLOR)
+        
+        # Description text (scrollable) below the image/info box
+        desc_y: int = y + box_height + self.IMAGE_SPACING
+        desc_x: int = self.PADDING_HORIZONTAL
+        content_width: int = self.disp.width - (self.PADDING_HORIZONTAL * 2)
+        
+        lines: List[str] = page._wrap_text(
+            page.description,
+            self.body_font,
+            content_width
+        )
+        desc_line_height: int = self.BODY_FONT_SIZE + self.BODY_LINE_SPACING
+        start_line: int = self.scroll_offset
+        
+        for i, line in enumerate(lines[start_line:]):
+            if desc_y + self.BODY_FONT_SIZE > self.disp.height - self.PAGE_BOTTOM_MARGIN:
+                break
+            draw.text((desc_x, desc_y), line, font=self.body_font, fill=self.FG_COLOR)
+            desc_y += desc_line_height
 
         image = image.rotate(270)
         self.disp.ShowImage(image)
@@ -525,7 +746,19 @@ def create_sample_menus() -> Menu:
         """Placeholder action for menu items."""
         print("Action not implemented")
 
-    # Sample Pokemon pages
+    # Sample Pokemon description pages
+    bulbasaur_page = PokemonDescriptionPage(
+        name="Bulbasaur",
+        dex_number=1,
+        species="Seed Pokemon",
+        types=[("Grass", (120, 200, 80)), ("Poison", (160, 64, 160))],
+        height="0.7m",
+        weight="6.9kg",
+        description="Bulbasaur can be seen napping in bright sunlight. There is a seed on its back. By soaking up the sun's rays, the seed grows progressively larger.",
+        image_path="image.png",  # Set to actual bulbasaur image path
+    )
+
+    # Sample standard Pokemon pages (old style)
     pikachu_page = Page(
         title="Pikachu",
         text="Pikachu is an Electric-type Pokemon. When several of "
@@ -552,6 +785,7 @@ def create_sample_menus() -> Menu:
     # Pokemon menu
     pokemon_menu = Menu(
         [
+            ("Bulbasaur", bulbasaur_page),
             ("Pikachu", pikachu_page),
             ("Charizard", charizard_page),
         ],
@@ -570,8 +804,7 @@ def create_sample_menus() -> Menu:
         title="About",
         text=open("about.txt").read(),
         image_path='icon.jpg',
-        image_position="top",
-        image_size=(200,200)
+        image_position="top"
     )
 
     main_menu = Menu(
