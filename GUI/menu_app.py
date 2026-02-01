@@ -31,6 +31,7 @@ class BatteryIndicator:
         font: ImageFont.FreeTypeFont,
         pos: Tuple[int, int] = (200, 5),
         font_color: Tuple[int, int, int] = (255, 255, 255),
+        left_padding: int = 0,
     ) -> None:
         """
         Initialize battery indicator.
@@ -39,11 +40,13 @@ class BatteryIndicator:
             font: TrueType font for rendering text.
             pos: Position tuple (x, y) for battery display.
             font_color: RGB color tuple for the text.
+            left_padding: Left padding in pixels.
         """
         self.battery: BatteryReader = BatteryReader()
         self.font: ImageFont.FreeTypeFont = font
         self.pos: Tuple[int, int] = pos
         self.font_color: Tuple[int, int, int] = font_color
+        self.left_padding: int = left_padding
 
     def draw(self, draw_obj: ImageDraw.ImageDraw) -> None:
         """
@@ -61,8 +64,8 @@ class BatteryIndicator:
         terminal_height: int = 8
         border_thickness: int = 2
         
-        # Position for battery body
-        body_x: int = self.pos[0]
+        # Position for battery body (with left padding)
+        body_x: int = self.pos[0] + self.left_padding
         body_y: int = self.pos[1]
         
         # Draw battery body outline (light grey)
@@ -95,11 +98,24 @@ class BatteryIndicator:
                 fill=(255, 255, 255)
             )
         
-        # Draw percentage text next to battery
+        # Draw percentage text overlaid on battery with contrast
         text: str = f"{percent}%"
-        text_x: int = terminal_x + terminal_width + 5
-        text_y: int = body_y + 2
-        draw_obj.text((text_x, text_y), text, font=self.font, fill=(255, 255, 255))
+        bbox = self.font.getbbox(text)
+        text_width: int = bbox[2] - bbox[0]
+        text_height: int = bbox[3] - bbox[1]
+        
+        # Center text on battery
+        text_x: int = body_x + (battery_width - text_width) // 2
+        text_y: int = body_y + (battery_height - text_height) // 2 - 2
+        
+        # Determine text color based on fill level for contrast
+        # Use white text on dark background, black text on white fill
+        if percent > 50:
+            text_color = (0, 0, 0)  # Black text on white fill
+        else:
+            text_color = (255, 255, 255)  # White text on dark background
+        
+        draw_obj.text((text_x, text_y), text, font=self.font, fill=text_color)
 
 
 class BasePage:
@@ -435,7 +451,9 @@ class MenuApp:
         self.current_page: Optional[Page] = None
         self.scroll_offset: int = 0
         self.running: bool = True
-        self.battery_indicator: BatteryIndicator = BatteryIndicator(self.font)
+        self.battery_indicator: BatteryIndicator = BatteryIndicator(
+            self.font, left_padding=10
+        )
 
     def draw_menu(self) -> None:
         """
