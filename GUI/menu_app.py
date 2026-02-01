@@ -57,7 +57,109 @@ class BatteryIndicator:
         draw_obj.text(self.pos, text, font=self.font, fill=self.font_color)
 
 
-MenuItem = Tuple[str, Optional[Union["Menu", Callable[[], None]]]]
+class Page:
+    """
+    Represents a content page with text and optional image.
+
+    Displays formatted content with an image and text that wraps
+    automatically based on the available space and font size.
+
+    Attributes:
+        title: Page title displayed at the top.
+        text: Main text content to display (wraps automatically).
+        image_path: Optional path to JPG/PNG image file.
+        image_position: Position of image ('top', 'left', or 'right').
+        image_size: Tuple of (width, height) for image scaling.
+    """
+
+    def __init__(
+        self,
+        title: str,
+        text: str,
+        image_path: Optional[str] = None,
+        image_position: str = "top",
+        image_size: Optional[Tuple[int, int]] = None,
+    ) -> None:
+        """
+        Initialize a content page.
+
+        Args:
+            title: Title of the page.
+            text: Main text content.
+            image_path: Optional path to image file (JPG/PNG).
+            image_position: Where to place image ('top', 'left', 'right').
+            image_size: Optional (width, height) tuple for image resize.
+        """
+        self.title: str = title
+        self.text: str = text
+        self.image_path: Optional[str] = image_path
+        self.image_position: str = image_position
+        self.image_size: Optional[Tuple[int, int]] = image_size
+        self._cached_image: Optional[Image.Image] = None
+
+    def _load_image(self) -> Optional[Image.Image]:
+        """
+        Load and cache the page image.
+
+        Returns:
+            PIL Image object or None if no image or load fails.
+        """
+        if self._cached_image is not None:
+            return self._cached_image
+
+        if not self.image_path or not os.path.exists(self.image_path):
+            return None
+
+        try:
+            img: Image.Image = Image.open(self.image_path)
+            if self.image_size:
+                img = img.resize(self.image_size, Image.Resampling.LANCZOS)
+            self._cached_image = img
+            return img
+        except Exception as e:
+            print(f"Error loading image {self.image_path}: {e}")
+            return None
+
+    def _wrap_text(
+        self,
+        text: str,
+        font: ImageFont.FreeTypeFont,
+        max_width: int
+    ) -> List[str]:
+        """
+        Wrap text to fit within specified width.
+
+        Args:
+            text: Text to wrap.
+            font: Font used for measuring text.
+            max_width: Maximum width in pixels.
+
+        Returns:
+            List of text lines that fit within max_width.
+        """
+        lines: List[str] = []
+        words: List[str] = text.split()
+        current_line: str = ""
+
+        for word in words:
+            test_line: str = f"{current_line} {word}".strip()
+            bbox = font.getbbox(test_line)
+            text_width: int = bbox[2] - bbox[0]
+
+            if text_width <= max_width:
+                current_line = test_line
+            else:
+                if current_line:
+                    lines.append(current_line)
+                current_line = word
+
+        if current_line:
+            lines.append(current_line)
+
+        return lines
+
+
+MenuItem = Tuple[str, Optional[Union["Menu", "Page", Callable[[], None]]]]
 
 
 class Menu:
@@ -166,6 +268,7 @@ class MenuApp:
         )
         self.current_menu = root_menu
         self.menu_stack: List[Menu] = []
+        self.current_page: Optional[Page] = None
         self.running: bool = True
         self.battery_indicator: BatteryIndicator = BatteryIndicator(self.font)
 
@@ -248,41 +351,111 @@ class MenuApp:
         disp: ST7789.ST7789 = self.disp
 
         if disp.digital_read(disp.GPIO_KEY_DOWN_PIN) == 1:
-            self.current_menu.next()
+            if not self.current_page:
+                self.current_menu.next()
             time.sleep(self.DEBOUNCE_DELAY)
         elif disp.digital_read(disp.GPIO_KEY_UP_PIN) == 1:
-            self.current_menu.prev()
+            if not self.current_page:
+                self.current_menu.prev()
             time.sleep(self.DEBOUNCE_DELAY)
         elif disp.digital_read(disp.GPIO_KEY2_PIN) == 1:
-            self._handle_selection()
+            if not self.current_page:
+                self._handle_selection()
             time.sleep(self.DEBOUNCE_DELAY)
         elif disp.digital_read(disp.GPIO_KEY1_PIN) == 1:
-            self.navigate_back()
+            if self.current_page:
+                self.current_page = None  # Exit page view
+            else:
+                self.navigate_back()
             time.sleep(self.DEBOUNCE_DELAY)
 
     def _handle_selection(self) -> None:
         """
         Handle selection of current menu item.
 
-        Navigates to submenu if item has a Menu target, executes
-        callback if item has a callable target, or does nothing
-        if target is None.
+        Navigates to submenu if item has a Menu target, displays page
+        if item has a Page target, or executes callback if item has a
+        callable target.
         """
         _, target = self.current_menu.get_selected()
         if isinstance(target, Menu):
             self.navigate_to_menu(target)
+        elif isinstance(target, Page):
+            self.current_page = target
         elif callable(target):
             target()
+
+    def draw_page(self, page: Page) -> None:
+        """
+        Render a page with text and optional image.
+
+        Args:
+            page: Page object to render.
+        """
+        image: Image.Image = Image.new(
+            "RGB",
+            (self.disp.width, self.disp.height),
+            self.BG_COLOR
+        )
+        draw: ImageDraw.ImageDraw = ImageDraw.Draw(image)
+        self.battery_indicator.draw(draw)
+
+        y: int = 0
+        x: int = 10
+        content_width: int = self.disp.width - 20
+
+        # Draw title
+        draw.text(
+            (x, y),
+            page.title,
+            font=self.font,
+            fill=self.FG_COLOR
+        )
+        y += self.FONT_SIZE + 10
+
+        # Load and position image
+        page_image: Optional[Image.Image] = page._load_image()
+        if page_image:
+            if page.image_position == "top":
+                img_x: int = (self.disp.width - page_image.width) // 2
+                image.paste(page_image, (img_x, y))
+                y += page_image.height + 10
+            elif page.image_position == "left":
+                image.paste(page_image, (x, y))
+                x += page_image.width + 10
+                content_width -= (page_image.width + 10)
+            elif page.image_position == "right":
+                img_x = self.disp.width - page_image.width - 10
+                image.paste(page_image, (img_x, y))
+                content_width -= (page_image.width + 10)
+
+        # Draw wrapped text
+        lines: List[str] = page._wrap_text(
+            page.text,
+            self.font,
+            content_width
+        )
+        for line in lines:
+            if y + self.FONT_SIZE > self.disp.height - 10:
+                break  # Stop if we run out of space
+            draw.text((x, y), line, font=self.font, fill=self.FG_COLOR)
+            y += self.FONT_SIZE + 4
+
+        image = image.rotate(270)
+        self.disp.ShowImage(image)
 
     def run(self) -> None:
         """
         Run the main application loop.
 
-        Continuously renders menu and processes input until
+        Continuously renders menu or page and processes input until
         self.running is set to False.
         """
         while self.running:
-            self.draw_menu()
+            if self.current_page:
+                self.draw_page(self.current_page)
+            else:
+                self.draw_menu()
             self.handle_input()
 
     def stop(self) -> None:
@@ -303,6 +476,39 @@ def create_sample_menus() -> Menu:
         """Placeholder action for menu items."""
         print("Action not implemented")
 
+    # Sample Pokemon pages
+    pikachu_page = Page(
+        title="Pikachu",
+        text="Pikachu is an Electric-type Pokemon. When several of "
+             "these Pokemon gather, their electricity can build and "
+             "cause lightning storms. It has small electric sacs on "
+             "both its cheeks. If threatened, it looses electric charges "
+             "from the sacs.",
+        image_path='image.jpg',  # Set to actual image path like "images/pikachu.jpg"
+        image_position="top",
+        image_size=(100, 100),
+    )
+
+    charizard_page = Page(
+        title="Charizard",
+        text="Charizard is a Fire and Flying-type Pokemon. It spits fire "
+             "that is hot enough to melt boulders. Known to cause forest "
+             "fires unintentionally. When expelling a blast of super hot "
+             "fire, the red flame at the tip of its tail burns more intensely.",
+        image_path=None,  # Set to actual image path
+        image_position="top",
+        image_size=(100, 100),
+    )
+
+    # Pokemon menu
+    pokemon_menu = Menu(
+        [
+            ("Pikachu", pikachu_page),
+            ("Charizard", charizard_page),
+        ],
+        title="Pokedex",
+    )
+
     settings_menu = Menu(
         [
             ("Sound", None),
@@ -311,19 +517,20 @@ def create_sample_menus() -> Menu:
         title="Settings",
     )
 
-    about_menu = Menu(
-        [
-            ("Version 1.0", None),
-            ("License", None),
-        ],
-        title="About",
+    about_page = Page(
+        title="About Pokedex",
+        text="Raspberry Pi Pokedex v1.0. A portable Pokemon encyclopedia "
+             "with information and images of your favorite Pokemon. "
+             "Navigate using the buttons and explore the world of Pokemon!",
+        image_path=None,
+        image_position="top",
     )
 
     main_menu = Menu(
         [
-            ("Start", placeholder_action),
+            ("Pokedex", pokemon_menu),
             ("Settings", settings_menu),
-            ("About", about_menu),
+            ("About", about_page),
         ],
         title="Main Menu",
     )
