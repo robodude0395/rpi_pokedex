@@ -75,12 +75,12 @@ class BatteryIndicator:
         terminal_width: int = 3
         terminal_height: int = 8
         border_thickness: int = 2
-        
+
         # Position for battery body (from right edge with padding)
         # pos[0] is display width minus battery width minus padding
         body_x: int = self.pos[0] - battery_width - terminal_width - self.right_padding
         body_y: int = self.pos[1]
-        
+
         # Draw battery body with grey background
         draw_obj.rectangle(
             [(body_x, body_y), (body_x + battery_width, body_y + battery_height)],
@@ -88,7 +88,7 @@ class BatteryIndicator:
             outline=self.outline_color,
             width=border_thickness
         )
-        
+
         # Draw battery terminal (light grey)
         terminal_x: int = body_x + battery_width
         terminal_y: int = body_y + (battery_height - terminal_height) // 2
@@ -96,12 +96,12 @@ class BatteryIndicator:
             [(terminal_x, terminal_y), (terminal_x + terminal_width, terminal_y + terminal_height)],
             fill=self.outline_color
         )
-        
+
         # Calculate fill width based on battery percentage
         inner_padding: int = border_thickness + 1
         fill_area_width: int = battery_width - (inner_padding * 2)
         fill_width: int = int(fill_area_width * (percent / 100))
-        
+
         # Draw battery fill (green)
         if fill_width > 0:
             draw_obj.rectangle(
@@ -111,7 +111,7 @@ class BatteryIndicator:
                 ],
                 fill=self.fill_color
             )
-        
+
         # Create smaller font for battery percentage
         try:
             battery_font: ImageFont.FreeTypeFont = MenuApp._load_font(
@@ -119,17 +119,17 @@ class BatteryIndicator:
             )
         except Exception:
             battery_font = self.font  # Fallback to original font
-        
+
         # Draw percentage text overlaid on battery with contrast
         text: str = f"{percent}%"
         bbox = battery_font.getbbox(text)
         text_width: int = bbox[2] - bbox[0]
         text_height: int = bbox[3] - bbox[1]
-        
+
         # Center text on battery
         text_x: int = body_x + (battery_width - text_width) // 2
         text_y: int = body_y + (battery_height - text_height) // 2 - 1
-        
+
         # Draw text with configured color
         draw_obj.text((text_x, text_y), text, font=battery_font, fill=self.font_color)
 
@@ -425,7 +425,7 @@ class MenuApp:
     MENU_FONT_SIZE: int = 16
     BODY_FONT_SIZE: int = 10
     DEBOUNCE_DELAY: float = 0.1
-    
+
     # Padding and spacing constants
     PADDING_HORIZONTAL: int = 10
     PADDING_VERTICAL: int = 5
@@ -437,14 +437,14 @@ class MenuApp:
     BODY_LINE_SPACING: int = 4
     PAGE_BOTTOM_MARGIN: int = 10
     TOP_BAR_HEIGHT: int = 35
-    POKEMON_IMAGE_SIZE: int = 100    
+    POKEMON_IMAGE_SIZE: int = 100
     @staticmethod
     def _load_font(size: int) -> ImageFont.FreeTypeFont:
         """Load TrueType font with specified size.
-        
+
         Args:
             size: Font size in pixels.
-            
+
         Returns:
             Loaded font object.
         """
@@ -480,7 +480,7 @@ class MenuApp:
 
     def _get_page_content_width(self) -> int:
         """Calculate available width for page content.
-        
+
         Returns:
             Content width in pixels.
         """
@@ -488,7 +488,7 @@ class MenuApp:
 
     def _display_image(self, image: Image.Image) -> None:
         """Rotate and display image on screen.
-        
+
         Args:
             image: Image to display.
         """
@@ -497,7 +497,7 @@ class MenuApp:
 
     def _create_display_image(self) -> Tuple[Image.Image, ImageDraw.ImageDraw]:
         """Create a new display image with battery indicator.
-        
+
         Returns:
             Tuple of (image, draw) objects.
         """
@@ -659,7 +659,7 @@ class MenuApp:
         page_image: Optional[Image.Image] = None
         if isinstance(page, Page) and page.image_path:
             page_image = page._load_image()
-            
+
         if page_image:
             if page.image_position == "top":
                 img_x: int = (self.disp.width - page_image.width) // 2
@@ -682,7 +682,7 @@ class MenuApp:
         )
         line_height: int = self.BODY_FONT_SIZE + self.BODY_LINE_SPACING
         start_line: int = self.scroll_offset
-        
+
         for i, line in enumerate(lines[start_line:]):
             if y + self.BODY_FONT_SIZE > self.disp.height - self.PAGE_BOTTOM_MARGIN:
                 break  # Stop if we run out of space
@@ -710,19 +710,19 @@ class MenuApp:
 
         y: int = self.TOP_BAR_HEIGHT
         x: int = self.PADDING_HORIZONTAL
-        
+
         # Load Pokemon image (left side)
         pokemon_image: Optional[Image.Image] = page._load_image()
         image_width: int = self.POKEMON_IMAGE_SIZE
-        
+
         if pokemon_image:
             image.paste(pokemon_image, (x, y))
-        
+
         # Info box (right side)
         info_x: int = x + image_width + self.IMAGE_SPACING
         info_y: int = y
         info_width: int = self.disp.width - info_x - self.PADDING_HORIZONTAL
-        
+
         # Draw info box background
         box_height: int = 100
         draw.rectangle(
@@ -730,42 +730,42 @@ class MenuApp:
             outline=self.FG_COLOR,
             width=1
         )
-        
+
         # Info content with tighter spacing
         info_text_x: int = info_x + 3
         info_text_y: int = info_y + 3
         small_font: ImageFont.FreeTypeFont = self.body_font
         line_height: int = self.BODY_FONT_SIZE + 1
-        
+
         # Dex number
         dex_text: str = f"#{page.dex_number:03d}"
         draw.text((info_text_x, info_text_y), dex_text, font=small_font, fill=self.FG_COLOR)
         info_text_y += line_height
-        
+
         # Pokemon name
         draw.text((info_text_x, info_text_y), page.name, font=small_font, fill=self.FG_COLOR)
         info_text_y += line_height + 2
-        
+
         # Types with background colors in 2-column grid
         type_y: int = info_text_y
         type_x: int = info_text_x
         type_height: int = self.BODY_FONT_SIZE + 2
         types_per_row: int = 2
         max_type_width: int = (info_width - 6) // 2  # Divide available width by 2
-        
+
         for idx, (type_name, type_color) in enumerate(page.types):
             # Calculate position in grid
             col: int = idx % types_per_row
             row: int = idx // types_per_row
-            
+
             # Position for this type badge
             current_type_x: int = info_text_x + (col * (max_type_width + 3))
             current_type_y: int = type_y + (row * (type_height + 2))
-            
+
             # Draw type badge
             bbox = small_font.getbbox(type_name)
             type_width: int = min((bbox[2] - bbox[0]) + 6, max_type_width)
-            
+
             draw.rectangle(
                 [(current_type_x, current_type_y), (current_type_x + type_width, current_type_y + type_height)],
                 fill=type_color
@@ -776,21 +776,21 @@ class MenuApp:
                 font=small_font,
                 fill=(255, 255, 255)
             )
-        
+
         # Calculate total rows needed for types
         num_rows: int = (len(page.types) + types_per_row - 1) // types_per_row
         info_text_y += (num_rows * (type_height + 2)) + 2
-        
+
         # Height and Weight
         draw.text((info_text_x, info_text_y), f"Height: {page.height}", font=small_font, fill=self.FG_COLOR)
         info_text_y += line_height
         draw.text((info_text_x, info_text_y), f"Weight: {page.weight}", font=small_font, fill=self.FG_COLOR)
-        
+
         # Description text (scrollable) below the image/info box
         desc_y: int = y + box_height + self.IMAGE_SPACING
         desc_x: int = self.PADDING_HORIZONTAL
         content_width: int = self._get_page_content_width()
-        
+
         lines: List[str] = page._wrap_text(
             page.description,
             self.body_font,
@@ -798,7 +798,7 @@ class MenuApp:
         )
         desc_line_height: int = self.BODY_FONT_SIZE + self.BODY_LINE_SPACING
         start_line: int = self.scroll_offset
-        
+
         for i, line in enumerate(lines[start_line:]):
             if desc_y + self.BODY_FONT_SIZE > self.disp.height - self.PAGE_BOTTOM_MARGIN:
                 break
@@ -862,7 +862,7 @@ def create_sample_menus() -> Menu:
     bulbasaur_page = PokemonDescriptionPage(
         name="Bulbasaur",
         dex_number=1,
-        types=[("Grass", (120, 200, 80)), ("Poison", (160, 64, 160)), ("Bitch", (90, 100, 200))],
+        types=[("Grass", (120, 200, 80)), ("Poison", (160, 64, 160))],
         height="0.7m",
         weight="6.9kg",
         description="Bulbasaur can be seen napping in bright sunlight. There is a seed on its back. By soaking up the sun's rays, the seed grows progressively larger.",
