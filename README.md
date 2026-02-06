@@ -35,7 +35,7 @@ The hardware consists of:
 </div>
 
 Is this the prettiest product? No.
-Is it the safest? I wouldn't bet on it
+Is it the safest? I wouldn't bet on it.
 Does it look cool? It does to me!
 
 # DISCLAIMER
