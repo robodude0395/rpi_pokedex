@@ -178,7 +178,7 @@ class BulbapediaScraper:
         # Extract from the info box - look for the table that contains Pokédex data
         # The main infobox has class "roundy infobox"
         infobox = soup.find('table', class_='roundy infobox')
-        
+
         # Fallback: look for a table that contains "Species" or "Type" row
         if not infobox:
             tables = soup.find_all('table', class_='roundy')
@@ -186,7 +186,7 @@ class BulbapediaScraper:
                 if table.find('th', string=re.compile(r'Species|Type', re.IGNORECASE)):
                     infobox = table
                     break
-        
+
         # Last fallback to first roundy table if specific one not found
         if not infobox:
             tables = soup.find_all('table', class_='roundy')
@@ -271,7 +271,7 @@ class BulbapediaScraper:
                 if bold_tag:
                     # Get text from the bold tag (includes nested anchor/span tags)
                     label_text = bold_tag.get_text(strip=True).lower()
-                    
+
                     # Find the nested table in this cell
                     nested_table = cell.find('table', class_='roundy')
                     if nested_table:
@@ -282,7 +282,7 @@ class BulbapediaScraper:
                             if len(measure_cells) >= 2:
                                 # Get metric measurement (second cell)
                                 metric = measure_cells[1].get_text(strip=True)
-                                
+
                                 if 'height' in label_text:
                                     details['height'] = metric
                                 elif 'weight' in label_text:
