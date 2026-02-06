@@ -5,3 +5,4 @@ web_scraping/bubapedia_full_nat_dex.html
 web_scraping/example_pokemon_page.htm
 web_scraping\bulbasaur_example_page.html
 .DS_Store
+optimize_gif.py
