@@ -866,7 +866,7 @@ def create_sample_menus() -> Menu:
         height="0.7m",
         weight="6.9kg",
         description="Bulbasaur can be seen napping in bright sunlight. There is a seed on its back. By soaking up the sun's rays, the seed grows progressively larger.",
-        image_path="image.png",  # Set to actual bulbasaur image path
+        image_path="bulbasaur.png",  # Set to actual bulbasaur image path
     )
 
     # Sample standard Pokemon pages (old style)
