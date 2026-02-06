@@ -5,7 +5,7 @@ So a while ago I got an rpi zero (basically a mini linux computer) and I was stu
 
 *An rpi pokedex!*
 
-![image](images/pokedex.png)
+![image](images/pokedex.gif)
 
 # The software
 The software consist of a bunch of ETL scripts that do the following:
@@ -27,7 +27,12 @@ The hardware consists of:
 + A discarded Vape battery I gutted and added my electronics onto for portability and recharging
 + An ADC module for battery level monitoring
 
-![image](images/pokedex.png)
+<div style="display:grid;grid-template-columns:repeat(2,1fr);gap:8px;max-width:640px;">
+  <figure><img src="images/dex_entry.png" alt="Dex Entry" style="width:100%;height:auto;"><figcaption>Dex Entry</figcaption></figure>
+  <figure><img src="images/side.png" alt="Back" style="width:100%;height:auto;"><figcaption>Back</figcaption></figure>
+  <figure><img src="images/charging.png" alt="Charging" style="width:100%;height:auto;"><figcaption>Charging</figcaption></figure>
+  <figure><img src="images/top.png" alt="Top" style="width:100%;height:auto;"><figcaption>Top</figcaption></figure>
+</div>
 
 Is this the prettiest product? No.
 Is it the safest? I wouldn't bet on it
