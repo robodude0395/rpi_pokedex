@@ -29,7 +29,7 @@ def query(sql, params=()):
 
 def find_image(name, gen):
     """Find pokemon image in raw_pokemon directory."""
-    pattern = f"{RAW_POKEMON}/Gen_{gen}/{name}/*.png"
+    pattern = f"{RAW_POKEMON}/Gen_{gen}/{name}/image.png"
     images = glob(pattern)
     return images[0] if images else ""
 
