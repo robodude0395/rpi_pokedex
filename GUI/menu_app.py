@@ -155,6 +155,8 @@ class BasePage:
         """
         self.title: str = title
         self.text: str = text
+        self._wrapped_lines_cache: Optional[List[str]] = None
+        self._last_wrap_width: Optional[int] = None
 
     def _wrap_text(
         self,
@@ -163,7 +165,7 @@ class BasePage:
         max_width: int
     ) -> List[str]:
         """
-        Wrap text to fit within specified width.
+        Wrap text to fit within specified width (cached).
 
         Args:
             text: Text to wrap.
@@ -173,6 +175,10 @@ class BasePage:
         Returns:
             List of text lines that fit within max_width.
         """
+        # Return cached result if width hasn't changed
+        if self._wrapped_lines_cache is not None and self._last_wrap_width == max_width:
+            return self._wrapped_lines_cache
+
         lines: List[str] = []
         words: List[str] = text.split()
         current_line: str = ""
@@ -192,6 +198,9 @@ class BasePage:
         if current_line:
             lines.append(current_line)
 
+        # Cache the result
+        self._wrapped_lines_cache = lines
+        self._last_wrap_width = max_width
         return lines
 
 
@@ -477,6 +486,8 @@ class MenuApp:
         self.battery_indicator: BatteryIndicator = BatteryIndicator(
             self.font, pos=(240, 5), right_padding=0, battery_font_size=10
         )
+        self._rotated_image_cache: Optional[Image.Image] = None
+        self._last_rotated_image_id: Optional[int] = None
 
     def _get_page_content_width(self) -> int:
         """Calculate available width for page content.
@@ -487,13 +498,17 @@ class MenuApp:
         return self.disp.width - (self.PADDING_HORIZONTAL * 2)
 
     def _display_image(self, image: Image.Image) -> None:
-        """Rotate and display image on screen.
+        """Rotate and display image on screen (cached).
 
         Args:
             image: Image to display.
         """
-        image = image.rotate(270)
-        self.disp.ShowImage(image)
+        # Cache rotated image to avoid rotating every frame
+        image_id = id(image)
+        if self._last_rotated_image_id != image_id:
+            self._rotated_image_cache = image.rotate(270)
+            self._last_rotated_image_id = image_id
+        self.disp.ShowImage(self._rotated_image_cache)
 
     def _create_display_image(self) -> Tuple[Image.Image, ImageDraw.ImageDraw]:
         """Create a new display image with battery indicator.
@@ -824,7 +839,7 @@ class MenuApp:
     def _scroll_page_down(self) -> None:
         """Scroll page content down (show later lines)."""
         if self.current_page:
-            # Calculate total lines
+            # Use cached wrapped lines
             content_width: int = self._get_page_content_width()
             lines: List[str] = self.current_page._wrap_text(
                 self.current_page.text,
