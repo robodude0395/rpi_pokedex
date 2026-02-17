@@ -13,10 +13,11 @@ DB = "schema/pokedex.db"
 RAW_POKEMON = "web_scraping/raw_pokemon"
 
 def parse_color(color_str):
-    """Parse 'R,G,B' string to tuple, default to grey."""
+    """Parse hex color '#RRGGBB' to RGB tuple, default to grey."""
     try:
-        return tuple(map(int, color_str.split(',')))
-    except (ValueError, TypeError):
+        hex_str = color_str.lstrip('#')
+        return tuple(int(hex_str[i:i+2], 16) for i in (0, 2, 4))
+    except (ValueError, TypeError, AttributeError):
         return (128, 128, 128)
 
 def query(sql, params=()):
