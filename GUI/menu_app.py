@@ -424,7 +424,7 @@ class MenuApp:
     FONT_SIZE: int = 22
     MENU_FONT_SIZE: int = 16
     BODY_FONT_SIZE: int = 10
-    DEBOUNCE_DELAY: float = 0.1
+    DEBOUNCE_DELAY: float = 0.01
 
     # Padding and spacing constants
     PADDING_HORIZONTAL: int = 10
