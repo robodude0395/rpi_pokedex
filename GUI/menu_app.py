@@ -424,7 +424,7 @@ class MenuApp:
     FONT_SIZE: int = 22
     MENU_FONT_SIZE: int = 16
     BODY_FONT_SIZE: int = 10
-    DEBOUNCE_DELAY: float = 0.01
+    DEBOUNCE_DELAY: float = 0.1
 
     # Padding and spacing constants
     PADDING_HORIZONTAL: int = 10
@@ -532,14 +532,14 @@ class MenuApp:
         # Calculate visible items based on screen height
         item_height = self.MENU_FONT_SIZE + self.MENU_ITEM_SPACING
         max_items = (self.disp.height - y) // item_height
-        
+
         # Keep selected item visible by scrolling menu
         first_visible = max(0, menu.selected - max_items + 1)
-        
+
         # Render only visible items
         for i in range(first_visible, min(first_visible + max_items, len(menu.items))):
             item_text, _ = menu.items[i]
-            
+
             if i == menu.selected:
                 draw.rectangle(
                     [
