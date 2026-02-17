@@ -2,7 +2,6 @@
  TODO:
 
     -Scrape type attack bonuses (and maybe weaknesses)
-    -Design ERD for database (3NF or STAR)
     -Implement ETL script to transfer to pokemon database
     -Deploy DB on rpi
     -Design rpi zero pokedex GUI that displays pokemon data
@@ -14,7 +13,7 @@
    wget https://github.com/joan2937/lg/archive/master.zip
    unzip master.zip
    cd lg-master
-   sudo make install 
+   sudo make install
 ```
 
 ## display_and_input install

@@ -1,8 +1,10 @@
 .venv
 bubapedia_full_nat_dex
-web_scraping/raw_pokemon
+*raw_pokemon
 web_scraping/bubapedia_full_nat_dex.html
 web_scraping/example_pokemon_page.htm
 web_scraping\bulbasaur_example_page.html
 .DS_Store
 optimize_gif.py
+*__pycache__
+*.pytest_cache

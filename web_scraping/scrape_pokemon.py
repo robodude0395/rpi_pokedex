@@ -660,7 +660,7 @@ def main():
     """Example usage"""
     # Scrape Generation 1
     # Set debug_mode=True to only process one Pokemon for testing
-    scraper = BulbapediaScraper(generation=1, debug_mode=True)
+    scraper = BulbapediaScraper(generation=1, debug_mode=False)
     scraper.scrape_generation()
 
 

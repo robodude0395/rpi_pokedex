@@ -1,0 +1,479 @@
+move_id,move_name,is_tm
+1,Peck,0
+2,Thunder Wave,1
+3,Thunder Shock,0
+4,Light Screen,1
+5,Pluck,1
+6,Agility,1
+7,Ancient Power,1
+8,Charge,1
+9,Drill Peck,0
+10,Roost,1
+11,Discharge,0
+12,Rain Dance,1
+13,Thunder,1
+14,Detect,0
+15,Magnetic Flux,0
+16,Zap Cannon,0
+17,Take Down,1
+18,Protect,1
+19,Acrobatics,1
+20,Facade,1
+21,Aerial Ace,1
+22,Swift,1
+23,Air Cutter,1
+24,Endure,1
+25,Volt Switch,1
+26,Sunny Day,1
+27,Sandstorm,1
+28,U-turn,1
+29,Sleep Talk,1
+30,Electro Ball,1
+31,Rest,1
+32,Eerie Impulse,1
+33,Fly,1
+34,Substitute,1
+35,Tailwind,1
+36,Heat Wave,1
+37,Thunderbolt,1
+38,Helping Hand,1
+39,Baton Pass,1
+40,Electric Terrain,1
+41,Wild Charge,1
+42,Giga Impact,1
+43,Hurricane,1
+44,Hyper Beam,1
+45,Brave Bird,1
+46,Tera Blast,1
+47,Weather Ball,1
+48,Dual Wingbeat,1
+49,Supercell Slam,1
+50,Metal Sound,1
+51,Confusion,0
+52,Psybeam,1
+53,Teleport,0
+54,Reflect,1
+55,Psycho Cut,1
+56,Recover,0
+57,Psyshock,1
+58,Psychic,1
+59,Safeguard,1
+60,Future Sight,1
+61,Calm Mind,1
+62,Thunder Punch,1
+63,Ice Punch,1
+64,Energy Ball,1
+65,Fire Punch,1
+66,Double Team,1
+67,Body Slam,1
+68,Zen Headbutt,1
+69,Shadow Ball,1
+70,Iron Tail,1
+71,Dazzling Gleam,1
+72,Taunt,1
+73,Metronome,1
+74,Dream Eater,1
+75,Charge Beam,1
+76,Drain Punch,1
+77,Tri Attack,1
+78,Leer,0
+79,Gust,0
+80,Steel Wing,1
+81,Knock Off,1
+82,Quick Attack,0
+83,Brutal Swing,1
+84,False Swipe,1
+85,Focus Energy,1
+86,Slash,0
+87,Swords Dance,1
+88,Feather Dance,1
+89,Air Slash,1
+90,Leaf Blade,0
+91,Night Slash,1
+92,Poison Jab,1
+93,Curse,1
+94,Work Up,1
+95,Close Combat,1
+96,Trailblaze,1
+97,First Impression,1
+98,Razor Wind,1
+99,Solar Blade,1
+100,Sky Attack,1
+101,Bind,0
+102,Withdraw,0
+103,Rollout,0
+104,Sand Attack,0
+105,Water Gun,0
+106,Mud Shot,1
+107,Brine,1
+108,Rock Blast,1
+109,Surf,1
+110,Shell Smash,0
+111,Hydro Pump,1
+112,Rock Slide,1
+113,Thief,1
+114,Snore,1
+115,Icy Wind,1
+116,Attract,1
+117,Hail,1
+118,Whirlpool,1
+119,Dive,1
+120,Rock Tomb,1
+121,Round,1
+122,Ice Beam,1
+123,Blizzard,1
+124,Waterfall,1
+125,Spikes,1
+126,Muddy Water,1
+127,Iron Defense,1
+128,Gyro Ball,1
+129,Toxic Spikes,1
+130,Earth Power,1
+131,Stealth Rock,1
+132,Scald,1
+133,Tackle,0
+134,Ice Shard,0
+135,Supersonic,0
+136,Aurora Beam,0
+137,Razor Shell,1
+138,Water Pulse,1
+139,Chilling Water,1
+140,Avalanche,1
+141,Snowscape,1
+142,Liquidation,1
+143,Ice Spinner,1
+144,Icicle Spear,1
+145,Vine Whip,0
+146,Growth,0
+147,Wrap,0
+148,Sleep Powder,0
+149,Poison Powder,0
+150,Stun Spore,0
+151,Acid,0
+152,Sweet Scent,0
+153,Gastro Acid,0
+154,Razor Leaf,0
+155,Slam,0
+156,Power Whip,1
+157,Acid Spray,1
+158,Pounce,1
+159,Magical Leaf,1
+160,Venoshock,1
+161,Bullet Seed,1
+162,Seed Bomb,1
+163,Grass Knot,1
+164,Leech Life,1
+165,Giga Drain,1
+166,Encore,1
+167,Grassy Terrain,1
+168,Sludge Bomb,1
+169,Leaf Storm,1
+170,Solar Beam,1
+171,Toxic,1
+172,Lunge,1
+173,Grassy Glide,1
+174,Sludge Wave,1
+175,Covet,0
+176,Growl,0
+177,Tail Whip,0
+178,Baby-Doll Eyes,0
+179,Bite,0
+180,Copycat,0
+181,Charm,1
+182,Double-Edge,1
+183,Last Resort,0
+184,Fake Tears,1
+185,Mud-Slap,1
+186,Stored Power,1
+187,Dig,1
+188,Hyper Voice,1
+189,Roar,1
+190,Alluring Voice,1
+191,Double Kick,0
+192,Thunder Fang,1
+193,Pin Missile,1
+194,Electroweb,1
+195,Switcheroo,0
+196,Pound,0
+197,Hypnosis,0
+198,Disable,0
+199,Headbutt,1
+200,Poison Gas,0
+201,Psych Up,1
+202,Swagger,1
+203,Nasty Plot,1
+204,Scary Face,1
+205,Low Kick,1
+206,Confuse Ray,1
+207,Hex,1
+208,Draining Kiss,1
+209,Low Sweep,1
+210,Night Shade,1
+211,Fling,1
+212,Brick Break,1
+213,Foul Play,1
+214,Body Press,1
+215,Imprison,1
+216,Skill Swap,1
+217,Trick,1
+218,Psychic Terrain,1
+219,Focus Blast,1
+220,Trick Room,1
+221,Haze,1
+222,Focus Punch,1
+223,Endeavor,1
+224,Expanding Force,1
+225,Psychic Noise,1
+226,Aqua Ring,0
+227,Aqua Jet,0
+228,Aqua Tail,0
+229,Smart Strike,1
+230,Drill Run,1
+231,Uproar,1
+232,Flip Turn,1
+233,Triple Axel,1
+234,Absorb,0
+235,Wing Attack,0
+236,Whirlwind,1
+237,Poison Fang,1
+238,Crunch,1
+239,Ominous Wind,1
+240,Defense Curl,0
+241,Rock Polish,0
+242,Bulldoze,1
+243,Rock Throw,0
+244,Smack Down,1
+245,Self-Destruct,1
+246,Earthquake,1
+247,Explosion,0
+248,Stone Edge,1
+249,Stomping Tantrum,1
+250,Iron Head,1
+251,Heavy Slam,1
+252,Flamethrower,1
+253,Fire Blast,1
+254,High Horsepower,1
+255,Hard Press,1
+256,Spark,0
+257,Screech,1
+258,Magnet Rise,0
+259,Flash Cannon,1
+260,Lock-On,0
+261,Steel Beam,1
+262,Gravity,1
+263,Poison Sting,0
+264,Scratch,0
+265,Fury Swipes,0
+266,Flatter,0
+267,Beat Up,1
+268,Shadow Claw,1
+269,Venom Drench,1
+270,Wide Guard,0
+271,Hammer Arm,0
+272,Harden,0
+273,Metal Claw,1
+274,Bubble Beam,0
+275,Stomp,0
+276,Flail,0
+277,Crabhammer,0
+278,Guillotine,0
+279,Amnesia,1
+280,Superpower,1
+281,X-Scissor,1
+282,Ally Switch,1
+283,Meteor Mash,0
+284,Moonblast,0
+285,Life Dew,0
+286,Sing,0
+287,Splash,0
+288,Sweet Kiss,0
+289,Moonlight,0
+290,Follow Me,0
+291,Cosmic Power,0
+292,Healing Wish,0
+293,After You,0
+294,Disarming Voice,1
+295,Play Rough,1
+296,Misty Terrain,1
+297,Misty Explosion,1
+298,Meteor Beam,1
+299,Twister,0
+300,Ice Fang,1
+301,Dragon Dance,1
+302,Thrash,0
+303,Dragon Tail,1
+304,Dark Pulse,1
+305,Dragon Pulse,1
+306,Outrage,1
+307,Spite,1
+308,Lash Out,1
+309,Scale Shot,1
+310,Temper Flare,1
+311,Dragon Cheer,1
+312,Belly Drum,0
+313,Megahorn,1
+314,Ember,0
+315,Flame Charge,1
+316,Flame Wheel,0
+317,Fire Spin,1
+318,Inferno,0
+319,Flare Blitz,1
+320,Pay Day,1
+321,Will-O-Wisp,1
+322,Bounce,1
+323,Mystical Fire,1
+324,Overheat,1
+325,Throat Chop,1
+326,Rock Smash,1
+327,Power-Up Punch,1
+328,Bullet Punch,0
+329,Bulk Up,1
+330,Dynamic Punch,0
+331,Comet Punch,1
+332,Dual Chop,1
+333,Storm Throw,1
+334,Fissure,1
+335,Circle Throw,1
+336,Double Hit,1
+337,Sludge,0
+338,Minimize,0
+339,Gunk Shot,1
+340,Acid Armor,0
+341,Belch,0
+342,Memento,0
+343,Pain Split,1
+344,Horn Attack,0
+345,Soak,0
+346,Horn Drill,0
+347,Petal Dance,0
+348,Petal Blizzard,1
+349,Leech Seed,0
+350,Synthesis,0
+351,Worry Seed,0
+352,Grass Pledge,1
+353,Frenzy Plant,1
+354,Smog,0
+355,Fire Fang,1
+356,Lava Plume,0
+357,Burning Jealousy,1
+358,Scorching Sands,1
+359,Echoed Voice,0
+360,Stockpile,0
+361,Spit Up,0
+362,Swallow,0
+363,Mimic,1
+364,Fury Attack,0
+365,Acupressure,0
+366,String Shot,0
+367,Mega Drain,0
+368,Pollen Puff,1
+369,Retaliate,1
+370,Reversal,1
+371,Howl,0
+372,Extreme Speed,0
+373,Snarl,1
+374,Psychic Fangs,1
+375,Heat Crash,1
+376,Reflect Type,0
+377,Skitter Smack,1
+378,Smokescreen,0
+379,Dragon Breath,0
+380,Dragon Claw,1
+381,Fire Pledge,1
+382,Breaking Swipe,1
+383,Mist,0
+384,Powder Snow,0
+385,Freeze-Dry,0
+386,Sheer Cold,0
+387,Fury Cutter,0
+388,Rapid Spin,0
+389,Sand Tomb,1
+390,Super Fang,1
+391,Assurance,0
+392,Defog,1
+393,Bonemerang,0
+394,Perish Song,0
+395,Skull Bash,1
+396,Infestation,0
+397,Heal Block,1
+398,Torment,1
+399,Magnet Bomb,1
+400,Fake Out,1
+401,Recycle,0
+402,Lick,0
+403,Block,0
+404,Yawn,0
+405,Struggle Bug,1
+406,Bug Buzz,1
+407,Bug Bite,1
+408,Vacuum Wave,1
+409,Seismic Toss,0
+410,Cross Chop,0
+411,Rage Fist,0
+412,Final Gambit,0
+413,Astonish,0
+414,Sucker Punch,0
+415,Head Smash,0
+416,Laser Focus,0
+417,Shock Wave,1
+418,Cut,1
+419,Mirror Coat,0
+420,Shadow Punch,0
+421,Mean Look,0
+422,Payback,1
+423,Destiny Bond,0
+424,Phantom Force,1
+425,Poltergeist,1
+426,Icicle Crash,0
+427,Dragon Rush,0
+428,Draco Meteor,1
+429,Wave Crash,0
+430,Water Pledge,1
+431,Play Nice,0
+432,Nuzzle,0
+433,Feint,0
+434,Upper Hand,1
+435,Power Gem,1
+436,Crush Claw,0
+437,Heal Pulse,0
+438,Soft-Boiled,0
+439,Rage Powder,0
+440,Quiver Dance,0
+441,Clear Smog,0
+442,Silver Wind,1
+443,Extrasensory,0
+444,Incinerate,0
+445,Aura Sphere,1
+446,Power Swap,1
+447,Guard Swap,0
+448,Psystrike,0
+449,Mach Punch,0
+450,Quick Guard,0
+451,Mega Punch,1
+452,Counter,0
+453,Coaching,1
+454,Hydro Cannon,1
+455,Wonder Room,1
+456,Mega Kick,1
+457,Cross Poison,1
+458,Conversion,0
+459,Conversion 2,0
+460,Transform,0
+461,Strength,1
+462,Slack Off,0
+463,Spore,0
+464,Aromatherapy,0
+465,Flash,1
+466,Wood Hammer,0
+467,Raging Bull,0
+468,Glare,0
+469,Coil,0
+470,Poison Tail,1
+471,Tickle,0
+472,Ingrain,0
+473,Lovely Kiss,0
+474,Magic Room,1
+475,Blast Burn,1
+476,Blaze Kick,0
+477,High Jump Kick,0
+478,Axe Kick,0

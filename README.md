@@ -17,6 +17,20 @@ The software consist of a bunch of ETL scripts that do the following:
 
 After the data is loaded, a script runs that is basically my take on what a pokedex designed in a distant apocalyptic future would look like (GUI design from scratch is hard! ok?).
 
+## Running the ETL Pipeline
+
+From the repository root:
+
+```bash
+# Simplest way - use main.sh
+bash main.sh
+
+# Or run main.py directly from pipeline directory
+python pipeline/main.py --input web_scraping/raw_pokemon --output schema/pokemon.db --out_csv --verify
+```
+
+See [pipeline/README.md](pipeline/README.md) for detailed pipeline documentation and advanced options.
+
 # The hardware
 If you were to see the actual pokedex you'd think that this is some arcane device Tony Stark made in a cave with a box of scraps. Alas... This is the product of my dedication and overzealous use of hot glue.
 
