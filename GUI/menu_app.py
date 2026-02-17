@@ -514,8 +514,7 @@ class MenuApp:
         """
         Render the current menu to the display.
 
-        Creates an image with menu items, highlights the selected item,
-        displays the battery indicator, and shows the result on screen.
+        Only renders visible menu items to improve performance.
         """
         menu = self.current_menu
         image, draw = self._create_display_image()
@@ -530,7 +529,17 @@ class MenuApp:
             )
             y += self.FONT_SIZE + self.PADDING_VERTICAL
 
-        for i, (item_text, _) in enumerate(menu.items):
+        # Calculate visible items based on screen height
+        item_height = self.MENU_FONT_SIZE + self.MENU_ITEM_SPACING
+        max_items = (self.disp.height - y) // item_height
+        
+        # Keep selected item visible by scrolling menu
+        first_visible = max(0, menu.selected - max_items + 1)
+        
+        # Render only visible items
+        for i in range(first_visible, min(first_visible + max_items, len(menu.items))):
+            item_text, _ = menu.items[i]
+            
             if i == menu.selected:
                 draw.rectangle(
                     [
@@ -552,7 +561,7 @@ class MenuApp:
                     font=self.menu_font,
                     fill=self.FG_COLOR
                 )
-            y += self.MENU_FONT_SIZE + self.MENU_ITEM_SPACING
+            y += item_height
 
         self._display_image(image)
 
