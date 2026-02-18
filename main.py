@@ -7,7 +7,7 @@ from pathlib import Path
 from glob import glob
 
 sys.path.insert(0, str(Path(__file__).parent / "GUI"))
-from menu_app import Menu, MenuApp, PokemonDescriptionPage
+from GUI.menu_app import Menu, MenuApp, PokemonDescriptionPage
 
 DB = "schema/pokedex.db"
 RAW_POKEMON = "web_scraping/raw_pokemon"
