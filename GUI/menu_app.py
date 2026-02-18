@@ -12,7 +12,7 @@ from typing import Callable, List, Optional, Tuple, Union
 from PIL import Image, ImageDraw, ImageFont
 
 from display_and_input import ST7789
-from battery_utils import BatteryReader
+from .battery_utils import BatteryReader
 
 
 class BatteryIndicator:
