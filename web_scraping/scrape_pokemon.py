@@ -657,11 +657,27 @@ class BulbapediaScraper:
 
 
 def main():
-    """Example usage"""
-    # Scrape Generation 1
-    # Set debug_mode=True to only process one Pokemon for testing
-    scraper = BulbapediaScraper(generation=1, debug_mode=False)
-    scraper.scrape_generation()
+
+    import argparse
+    parser = argparse.ArgumentParser(description="Bulbapedia Pokemon Scraper CLI")
+    parser.add_argument(
+        "--generations",
+        type=int,
+        default=1,
+        help="Number of generations to scrape (1-9)"
+    )
+    parser.add_argument(
+        "--debug",
+        action="store_true",
+        help="Enable debug mode (only scrape one Pokemon per generation)"
+    )
+    args = parser.parse_args()
+
+    max_generation = min(args.generations, 9)
+    for gen in range(1, max_generation + 1):
+        print(f"\n--- Scraping Generation {gen} ---")
+        scraper = BulbapediaScraper(generation=gen, debug_mode=args.debug)
+        scraper.scrape_generation()
 
 
 if __name__ == "__main__":

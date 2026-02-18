@@ -7,6 +7,18 @@ So a while ago I got an rpi zero (basically a mini linux computer) and I was stu
 
 ![image](images/pokedex.gif)
 
+# Install
+## lgpio install (needed for 1.3 inch HAT)
+```
+   wget https://github.com/joan2937/lg/archive/master.zip
+   unzip master.zip
+   cd lg-master
+   sudo make install
+```
+
+## display_and_input install
+   pip install -e ./display_and_input
+
 # The software
 The software consist of a bunch of ETL scripts that do the following:
 
@@ -17,16 +29,30 @@ The software consist of a bunch of ETL scripts that do the following:
 
 After the data is loaded, a script runs that is basically my take on what a pokedex designed in a distant apocalyptic future would look like (GUI design from scratch is hard! ok?).
 
+## Scrape the pokemon database data
+```bash
+source .venv/bin/activate
+cd web_scraping
+pip install -r requirements.txt
+python scrape_pokemon.py --generations 9
+```
+
 ## Running the ETL Pipeline
 
 From the repository root:
 
 ```bash
 # Simplest way - use main.sh
-bash main.sh
+bash pipeline.sh
 
 # Or run main.py directly from pipeline directory
 python pipeline/main.py --input web_scraping/raw_pokemon --output schema/pokemon.db --out_csv --verify
+```
+
+## Running the main pokedex
+```bash
+source .venv/bin/activate
+python main.py
 ```
 
 See [pipeline/README.md](pipeline/README.md) for detailed pipeline documentation and advanced options.

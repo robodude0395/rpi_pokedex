@@ -155,7 +155,7 @@ class BasePage:
         """
         self.title: str = title
         self.text: str = text
-        self._wrapped_lines_cache: Optional[List[str]] = None
+        sudo systemctl status pokedex        self._wrapped_lines_cache: Optional[List[str]] = None
         self._last_wrap_width: Optional[int] = None
 
     def _wrap_text(
@@ -227,16 +227,7 @@ class Page(BasePage):
         image_position: str = "top",
         image_size: Optional[Tuple[int, int]] = None,
     ) -> None:
-        """
-        Initialize a content page.
-
-        Args:
-            title: Title of the page.
-            text: Main text content.
-            image_path: Optional path to image file (JPG/PNG).
-            image_position: Where to place image ('top', 'left', 'right').
-            image_size: Optional (width, height) tuple for image resize.
-        """
+        """Initialize a content page."""
         super().__init__(title, text)
         self.image_path: Optional[str] = image_path
         self.image_position: str = image_position
