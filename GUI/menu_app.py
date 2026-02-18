@@ -155,7 +155,7 @@ class BasePage:
         """
         self.title: str = title
         self.text: str = text
-        sudo systemctl status pokedex        self._wrapped_lines_cache: Optional[List[str]] = None
+        self._wrapped_lines_cache: Optional[List[str]] = None
         self._last_wrap_width: Optional[int] = None
 
     def _wrap_text(
