@@ -86,7 +86,7 @@ def build_root_menu():
 if __name__ == "__main__":
     if not Path(DB).exists():
         print(f"Error: Database not found at {DB}")
-        print("Run 'bash main.sh' first to generate it")
+        print("Run 'bash pipeline.sh' first to generate it")
         sys.exit(1)
 
     print("Loading Pokedex...")

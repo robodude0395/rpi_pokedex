@@ -3,7 +3,7 @@ import board
 from adafruit_ads1x15 import ADS1115, AnalogIn, ads1x15
 
 class BatteryReader:
-    def __init__(self, min_voltage=3.2, max_voltage=4.2):
+    def __init__(self, min_voltage=3.2, max_voltage=4.0):
         self.min_voltage = min_voltage
         self.max_voltage = max_voltage
         # Create the I2C bus
