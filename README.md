@@ -78,9 +78,4 @@ Is this the prettiest product? No.
 Is it the safest? I wouldn't bet on it.
 Does it look cool? It does to me!
 
-# DISCLAIMER
-This is very much a passion project that I'm tackling in my spare time. A lot of the codebase still needs polishing and implementing.
-
-The webscraping and GUI basics are pretty much done but the database setup and loading still need work.
-
 
